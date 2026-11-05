@@ -1,0 +1,63 @@
+{
+  "name": "E.D.I.T.H. — S24 Ultra Tactical AI",
+  "short_name": "E.D.I.T.H. S24",
+  "description": "Assistant personnel et tactique inspiré par Tony Stark. Optimisé pour Samsung Galaxy S24 Ultra, écran Dynamic AMOLED 2X, S Pen et vision multimodale.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#01060e",
+  "theme_color": "#00f0ff",
+  "lang": "fr-FR",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": [
+    "productivity",
+    "utilities",
+    "artificial-intelligence"
+  ],
+  "shortcuts": [
+    {
+      "name": "Parler à EDITH",
+      "short_name": "Voix",
+      "url": "./index.html?action=voice",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Vision Tactique AR",
+      "short_name": "Vision",
+      "url": "./index.html?action=camera",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Protocoles & S Pen",
+      "short_name": "Protocoles",
+      "url": "./index.html?action=tools",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

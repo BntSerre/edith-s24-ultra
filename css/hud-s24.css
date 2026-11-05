@@ -1,0 +1,1319 @@
+/* ==========================================================================
+   E.D.I.T.H. TACTICAL HUD — SAMSUNG GALAXY S24 ULTRA EDITION
+   Architecture: Sharp Titanium Industrial Aesthetic, QHD+ Dynamic AMOLED 2X,
+   Centered Infinity-O Camera Halo, S Pen Precision Canvas & Clean Protocols
+   ========================================================================== */
+
+:root {
+  /* Dynamic AMOLED 2X True Blacks & Titanium Industrial Palette */
+  --bg-dark: #000000;
+  --bg-dark-alt: #020710;
+  --bg-panel: rgba(3, 14, 28, 0.88);
+  --bg-card: rgba(4, 18, 36, 0.92);
+  --bg-card-hover: rgba(6, 26, 52, 0.98);
+  --titanium-frame: #1e293b;
+  --titanium-border: rgba(148, 163, 184, 0.25);
+  
+  /* J.A.R.V.I.S. High-Brightness Cyan */
+  --jarvis-blue: #00f0ff;
+  --jarvis-blue-dim: rgba(0, 240, 255, 0.22);
+  --jarvis-blue-glow: rgba(0, 240, 255, 0.75);
+  --jarvis-deep: #0284c7;
+
+  /* Vision Solar Amber / Orange */
+  --vision-orange: #ff7700;
+  --vision-orange-bright: #ff9900;
+  --vision-orange-dim: rgba(255, 119, 0, 0.25);
+  --vision-orange-glow: rgba(255, 119, 0, 0.75);
+  --vision-core: #ffb703;
+
+  /* Status Colors */
+  --text-main: #f0f9ff;
+  --text-muted: #94a3b8;
+  --border-cyan: rgba(0, 240, 255, 0.35);
+  --border-orange: rgba(255, 119, 0, 0.45);
+  --danger-red: #ef4444;
+  --success-green: #10b981;
+
+  --font-hud: 'Orbitron', 'Rajdhani', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'Share Tech Mono', 'SF Mono', 'Courier New', monospace;
+
+  /* Android / S24 Ultra Viewport Safe Areas */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+/* Base Styles & S24 Ultra Sharp Layout */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: var(--font-hud);
+  overflow: hidden;
+  position: fixed;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+/* Futuristic Scanline Effect */
+.scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 999;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 240, 255, 0.02) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.01),
+    rgba(0, 255, 0, 0.005),
+    rgba(0, 240, 255, 0.01)
+  );
+  background-size: 100% 3px, 6px 100%;
+}
+
+/* Background HUD Grid with Anti-reflective Armor effect */
+.hud-grid-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: 
+    radial-gradient(circle at 50% 18%, rgba(0, 240, 255, 0.10) 0%, transparent 60%),
+    radial-gradient(circle at 50% 82%, rgba(255, 119, 0, 0.07) 0%, transparent 55%),
+    linear-gradient(rgba(0, 240, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.025) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* S24 Ultra Sharp Frame Container */
+.app-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+  padding-top: max(var(--safe-top), 2px);
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+  background: var(--bg-dark-alt);
+  overflow: hidden;
+  overscroll-behavior-y: none;
+  border-left: 1px solid var(--titanium-border);
+  border-right: 1px solid var(--titanium-border);
+  box-shadow: 0 0 40px rgba(0, 240, 255, 0.15);
+}
+
+/* ==========================================================================
+   INFINITY-O CAMERA HALO (S24 Ultra Centered Punch-Hole Camera Frame)
+   ========================================================================== */
+.infinity-o-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 3px 18px 2px;
+  height: 18px;
+  pointer-events: none;
+  z-index: 15;
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.punch-wing {
+  font-size: 8px;
+  font-family: var(--font-mono);
+  letter-spacing: 1.5px;
+  color: var(--jarvis-blue);
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.punch-wing.right {
+  color: var(--vision-orange-bright);
+}
+
+.infinity-o-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.camera-halo-ring {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--jarvis-blue);
+  animation: rotate-cw 10s linear infinite;
+  box-shadow: 0 0 8px var(--jarvis-blue-glow);
+}
+
+/* ==========================================================================
+   TOP TELEMETRY HEADER
+   ========================================================================== */
+.hud-header {
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--border-cyan);
+  background: rgba(2, 9, 20, 0.95);
+  backdrop-filter: blur(16px);
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.hud-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 10%;
+  width: 80%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--vision-orange), transparent);
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  position: relative;
+}
+
+.brand-icon svg {
+  width: 100%;
+  height: 100%;
+  animation: pulse-glow 3s infinite alternate;
+}
+
+.brand-title {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--jarvis-blue);
+  text-shadow: 0 0 10px var(--jarvis-blue-glow);
+}
+
+.brand-subtitle {
+  font-size: 7.5px;
+  font-family: var(--font-mono);
+  letter-spacing: 1.5px;
+  color: var(--vision-orange-bright);
+}
+
+.telemetry-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.telem-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid var(--border-cyan);
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.telem-pill.active {
+  border-color: var(--vision-orange);
+  color: var(--vision-orange-bright);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--jarvis-blue);
+  box-shadow: 0 0 6px var(--jarvis-blue);
+  animation: blink 2s infinite ease-in-out;
+}
+
+.status-dot.orange {
+  background: var(--vision-orange);
+  box-shadow: 0 0 6px var(--vision-orange);
+}
+
+.btn-icon {
+  background: transparent;
+  border: 1px solid var(--border-cyan);
+  color: var(--jarvis-blue);
+  width: 34px;
+  height: 34px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-icon:active {
+  transform: scale(0.92);
+  background: var(--jarvis-blue-dim);
+  border-color: var(--vision-orange);
+  color: var(--vision-orange);
+}
+
+/* ==========================================================================
+   VIEWPORT SECTIONS / TABS
+   ========================================================================== */
+.view-container {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.hud-tab-pane {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.hud-tab-pane.active {
+  display: flex;
+}
+
+/* ==========================================================================
+   TAB 1: HUD & VOICE ASSISTANT (MAIN)
+   ========================================================================== */
+.reactor-hero-section {
+  padding: 10px 16px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  background: radial-gradient(ellipse at center, rgba(0, 240, 255, 0.08) 0%, transparent 70%);
+  flex-shrink: 0;
+}
+
+.reactor-wrapper {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  cursor: pointer;
+}
+
+.reactor-rings {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px dashed var(--jarvis-blue);
+  animation: rotate-cw 20s linear infinite;
+  box-shadow: 0 0 15px var(--jarvis-blue-dim);
+}
+
+.reactor-rings-inner {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--vision-orange);
+  border-left-color: transparent;
+  border-right-color: transparent;
+  animation: rotate-ccw 8s linear infinite;
+  box-shadow: 0 0 20px var(--vision-orange-dim);
+}
+
+.reactor-core {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0%, var(--jarvis-blue) 40%, var(--vision-orange) 85%, #01060e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 25px var(--jarvis-blue-glow), inset 0 0 15px var(--vision-orange);
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.reactor-core svg {
+  width: 34px;
+  height: 34px;
+  fill: #ffffff;
+  filter: drop-shadow(0 0 6px var(--vision-core));
+  transition: transform 0.2s ease;
+}
+
+.reactor-wrapper.listening .reactor-core {
+  background: radial-gradient(circle, #ffffff 0%, var(--vision-orange-bright) 40%, var(--vision-orange) 85%, #01060e 100%);
+  box-shadow: 0 0 35px var(--vision-orange-glow), inset 0 0 20px #ffffff;
+  animation: pulse-orange 1.2s infinite alternate;
+}
+
+.reactor-wrapper.speaking .reactor-core {
+  background: radial-gradient(circle, #ffffff 0%, var(--jarvis-blue) 50%, var(--vision-orange) 90%, #01060e 100%);
+  box-shadow: 0 0 40px var(--jarvis-blue-glow), inset 0 0 20px var(--vision-orange);
+  animation: pulse-cyan 0.8s infinite alternate;
+}
+
+.waveform-canvas {
+  width: 220px;
+  height: 28px;
+  margin-top: 4px;
+}
+
+.edith-status-text {
+  font-size: 10.5px;
+  font-family: var(--font-mono);
+  letter-spacing: 1.8px;
+  color: var(--jarvis-blue);
+  text-transform: uppercase;
+  margin-top: 2px;
+  text-shadow: 0 0 8px var(--jarvis-blue-glow);
+}
+
+.quick-chips-wrapper {
+  padding: 6px 12px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+  background: rgba(1, 6, 14, 0.7);
+  flex-shrink: 0;
+}
+
+.quick-chips-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.quick-chip {
+  padding: 6px 13px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid var(--border-cyan);
+  color: var(--jarvis-blue);
+  border-radius: 4px; /* Sharp S24 Ultra rectangular corner */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.quick-chip:active {
+  background: var(--vision-orange-dim);
+  border-color: var(--vision-orange);
+  color: var(--vision-orange-bright);
+}
+
+.dialogue-stream {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+}
+
+.dialogue-stream::-webkit-scrollbar {
+  width: 3px;
+}
+
+.dialogue-stream::-webkit-scrollbar-thumb {
+  background: var(--border-cyan);
+}
+
+.message-bubble {
+  position: relative;
+  max-width: 90%;
+  padding: 12px 14px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.5;
+  user-select: text;
+  animation: fadeIn 0.25s ease;
+}
+
+.message-bubble.edith {
+  align-self: flex-start;
+  background: var(--bg-card);
+  border: 1px solid var(--border-cyan);
+  border-left: 3px solid var(--jarvis-blue);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+}
+
+.message-bubble.user {
+  align-self: flex-end;
+  background: rgba(255, 119, 0, 0.14);
+  border: 1px solid var(--border-orange);
+  border-right: 3px solid var(--vision-orange);
+  color: #fff;
+}
+
+.msg-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
+}
+
+.msg-author-edith {
+  color: var(--jarvis-blue);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 700;
+}
+
+.msg-author-user {
+  color: var(--vision-orange-bright);
+  font-weight: 700;
+}
+
+.msg-timestamp {
+  color: var(--text-muted);
+  font-size: 9px;
+}
+
+.msg-body {
+  word-break: break-word;
+}
+
+.msg-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(0, 240, 255, 0.2);
+}
+
+.msg-act-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tactical-input-bar {
+  padding: 8px 12px;
+  background: rgba(2, 9, 20, 0.96);
+  border-top: 1px solid var(--border-cyan);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.voice-main-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--vision-orange) 0%, #d84315 100%);
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 15px var(--vision-orange-glow);
+  flex-shrink: 0;
+  transition: transform 0.12s ease;
+}
+
+.voice-main-btn:active {
+  transform: scale(0.92);
+}
+
+.tactical-input, .setting-input, .setting-select {
+  font-size: 15px;
+  font-family: var(--font-hud);
+  color: var(--text-main);
+  background: rgba(2, 11, 20, 0.85);
+  border: 1px solid var(--border-cyan);
+  border-radius: 4px; /* Industrial sharp edges */
+  outline: none;
+  user-select: text;
+}
+
+.tactical-input {
+  flex: 1;
+  height: 44px;
+  padding: 0 12px;
+}
+
+.tactical-input:focus {
+  border-color: var(--vision-orange);
+  box-shadow: 0 0 10px var(--vision-orange-dim);
+}
+
+.send-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 4px;
+  background: rgba(0, 240, 255, 0.12);
+  border: 1px solid var(--border-cyan);
+  color: var(--jarvis-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   TAB 2: AR TACTICAL VISION
+   ========================================================================== */
+.ar-view-pane {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  overflow: hidden;
+}
+
+.camera-stream-wrapper {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#cameraVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#cameraCanvas {
+  display: none;
+}
+
+.ar-hud-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.ar-corners {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  bottom: 110px;
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  pointer-events: none;
+}
+
+.ar-corners::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 25px;
+  height: 25px;
+  border-top: 3px solid var(--jarvis-blue);
+  border-left: 3px solid var(--jarvis-blue);
+}
+
+.ar-corners::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 25px;
+  height: 25px;
+  border-bottom: 3px solid var(--vision-orange);
+  border-right: 3px solid var(--vision-orange);
+}
+
+.ar-target-reticle {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  border: 1px dashed var(--jarvis-blue);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: rotate-cw 12s linear infinite;
+}
+
+.ar-target-reticle::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: var(--vision-orange);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--vision-orange);
+}
+
+.ar-controls-bar {
+  padding: 10px 14px;
+  background: rgba(2, 9, 20, 0.95);
+  border-top: 1px solid var(--border-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 20;
+  flex-shrink: 0;
+}
+
+.ar-scan-btn {
+  flex: 1;
+  height: 48px;
+  background: linear-gradient(135deg, var(--vision-orange) 0%, #e65100 100%);
+  border: 2px solid #ffffff;
+  border-radius: 4px;
+  color: #fff;
+  font-family: var(--font-hud);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 0 15px var(--vision-orange-glow);
+}
+
+.ar-results-modal {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-height: 75%;
+  background: rgba(2, 9, 20, 0.98);
+  border-top: 2px solid var(--vision-orange);
+  border-radius: 8px 8px 0 0;
+  padding: 16px;
+  transform: translateY(105%);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+}
+
+.ar-results-modal.show {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   TAB 3: PROTOCOLES & STARK TOOLS — REDESIGNED & ULTRA CLEAN
+   ========================================================================== */
+.tools-view-pane {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Section Header Bar */
+.proto-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+  margin-bottom: 8px;
+}
+
+.proto-section-title {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--jarvis-blue);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.proto-section-badge {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  padding: 2px 6px;
+  background: rgba(0, 240, 255, 0.1);
+  border: 1px solid var(--border-cyan);
+  border-radius: 3px;
+  color: var(--vision-orange-bright);
+}
+
+/* Telemetry Dashboard Grid */
+.s24-telemetry-dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.telemetry-tile {
+  background: var(--bg-card);
+  border: 1px solid var(--border-cyan);
+  border-radius: 4px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.telemetry-tile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--jarvis-blue);
+}
+
+.telemetry-tile.accent::before {
+  background: var(--vision-orange);
+}
+
+.telemetry-tile-icon {
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.telemetry-tile-label {
+  font-size: 8.5px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+.telemetry-tile-val {
+  font-size: 12.5px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text-main);
+  margin-top: 3px;
+}
+
+/* S Pen Status Banner */
+.spen-status-card {
+  background: rgba(2, 14, 28, 0.9);
+  border: 1px solid var(--border-cyan);
+  border-radius: 4px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.spen-status-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--jarvis-blue);
+}
+
+/* S Pen Precision Sketching Canvas (Stark Tactical Pad) */
+.spen-canvas-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-cyan);
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.spen-canvas-wrapper {
+  width: 100%;
+  height: 160px;
+  background: #000000;
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  touch-action: none;
+}
+
+#spenCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.spen-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.spen-colors {
+  display: flex;
+  gap: 6px;
+}
+
+.color-dot-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.color-dot-btn.active {
+  border-color: #ffffff;
+  transform: scale(1.15);
+}
+
+/* Mission Log Section with Filters */
+.notes-filter-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.filter-btn {
+  padding: 4px 10px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  background: transparent;
+  border: 1px solid var(--border-cyan);
+  color: var(--text-muted);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.filter-btn.active {
+  background: var(--jarvis-blue);
+  color: #000;
+  font-weight: 700;
+  border-color: var(--jarvis-blue);
+}
+
+.note-composer-box {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.note-category-select {
+  height: 40px;
+  background: rgba(2, 11, 20, 0.85);
+  border: 1px solid var(--border-cyan);
+  color: var(--jarvis-blue);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 0 8px;
+  border-radius: 4px;
+  outline: none;
+}
+
+.notes-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.clean-note-card {
+  background: rgba(2, 12, 24, 0.85);
+  border: 1px solid rgba(0, 240, 255, 0.18);
+  border-left: 3px solid var(--jarvis-blue);
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.clean-note-card.urgent {
+  border-left-color: var(--danger-red);
+}
+
+.clean-note-card.idee {
+  border-left-color: var(--vision-orange);
+}
+
+.note-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 9.5px;
+  font-family: var(--font-mono);
+}
+
+.note-tag {
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: rgba(0, 240, 255, 0.12);
+  color: var(--jarvis-blue);
+  text-transform: uppercase;
+}
+
+.note-card-text {
+  font-size: 13px;
+  color: var(--text-main);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.note-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.note-action-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+}
+
+.note-action-btn:hover {
+  color: var(--vision-orange-bright);
+}
+
+/* Tactical Timer & Compass Row */
+.timer-compass-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 10px;
+}
+
+.clean-timer-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-orange);
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer-led {
+  font-size: 30px;
+  font-family: var(--font-mono);
+  color: var(--vision-orange-bright);
+  text-shadow: 0 0 12px var(--vision-orange-glow);
+  margin: 6px 0;
+}
+
+.clean-compass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-cyan);
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.compass-visual {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px dashed var(--jarvis-blue);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px 0;
+}
+
+.compass-arrow-needle {
+  position: absolute;
+  width: 4px;
+  height: 38px;
+  background: linear-gradient(to bottom, var(--vision-orange) 50%, var(--jarvis-blue) 50%);
+  border-radius: 2px;
+  transition: transform 0.2s ease-out;
+}
+
+/* ==========================================================================
+   TAB 4: CONFIGURATION & SETTINGS
+   ========================================================================== */
+.settings-view-pane {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tool-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-cyan);
+  border-radius: 4px;
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.tool-card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--jarvis-blue);
+  margin-bottom: 12px;
+}
+
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.setting-label {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
+  color: var(--jarvis-blue);
+  text-transform: uppercase;
+}
+
+.setting-select, .setting-input {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+}
+
+.action-btn-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.action-btn {
+  flex: 1;
+  height: 42px;
+  border-radius: 4px;
+  border: 1px solid var(--border-cyan);
+  background: rgba(0, 240, 255, 0.15);
+  color: var(--jarvis-blue);
+  font-family: var(--font-hud);
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.action-btn.orange {
+  border-color: var(--border-orange);
+  background: rgba(255, 119, 0, 0.2);
+  color: var(--vision-orange-bright);
+}
+
+.action-btn:active {
+  transform: scale(0.96);
+  background: var(--jarvis-blue);
+  color: #000;
+}
+
+.action-btn.orange:active {
+  background: var(--vision-orange);
+  color: #000;
+}
+
+/* ==========================================================================
+   BOTTOM HUD NAVIGATION BAR
+   ========================================================================== */
+.hud-bottom-nav {
+  height: calc(56px + max(var(--safe-bottom), 6px));
+  padding-bottom: max(var(--safe-bottom), 6px);
+  background: rgba(2, 9, 20, 0.98);
+  border-top: 1px solid var(--border-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.hud-bottom-nav::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 20%;
+  width: 60%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--jarvis-blue), transparent);
+}
+
+.nav-tab-item {
+  flex: 1;
+  height: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  font-family: var(--font-hud);
+  font-size: 9.5px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  position: relative;
+  transition: color 0.15s ease;
+}
+
+.nav-tab-item svg {
+  width: 20px;
+  height: 20px;
+}
+
+.nav-tab-item.active {
+  color: var(--jarvis-blue);
+  text-shadow: 0 0 8px var(--jarvis-blue-glow);
+}
+
+.nav-tab-item.active svg {
+  stroke: var(--jarvis-blue);
+  filter: drop-shadow(0 0 6px var(--jarvis-blue-glow));
+}
+
+.nav-tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: max(var(--safe-bottom), 4px);
+  width: 26px;
+  height: 2px;
+  background: var(--vision-orange);
+  box-shadow: 0 0 8px var(--vision-orange);
+}
+
+/* ==========================================================================
+   ANIMATIONS
+   ========================================================================== */
+@keyframes rotate-cw {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes rotate-ccw {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes pulse-cyan {
+  0% { box-shadow: 0 0 20px var(--jarvis-blue-dim); }
+  100% { box-shadow: 0 0 45px var(--jarvis-blue-glow); }
+}
+
+@keyframes pulse-orange {
+  0% { box-shadow: 0 0 20px var(--vision-orange-dim); }
+  100% { box-shadow: 0 0 50px var(--vision-orange-glow); }
+}
+
+@keyframes pulse-glow {
+  0% { filter: drop-shadow(0 0 4px var(--jarvis-blue)); }
+  100% { filter: drop-shadow(0 0 12px var(--vision-orange)); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}

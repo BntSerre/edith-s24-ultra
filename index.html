@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>E.D.I.T.H. — S24 Ultra Edition</title>
+  
+  <!-- PWA & Android Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00f0ff">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+
+  <!-- Tactical Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <!-- S24 Ultra HUD CSS -->
+  <link rel="stylesheet" href="css/hud-s24.css">
+</head>
+<body>
+  <!-- HUD Background Overlays -->
+  <div class="hud-grid-bg"></div>
+  <div class="scanlines"></div>
+
+  <!-- S24 Ultra Industrial Frame -->
+  <div class="app-container">
+    
+    <!-- Infinity-O Camera Frame (Samsung S24 Ultra Punch Hole) -->
+    <div class="infinity-o-bar">
+      <div class="punch-wing">[ EDITH // S24U</div>
+      <div class="infinity-o-center">
+        <div class="camera-halo-ring"></div>
+      </div>
+      <div class="punch-wing right">TITANIUM-HUD ]</div>
+    </div>
+
+    <!-- Top Telemetry Header -->
+    <header class="hud-header">
+      <div class="brand-section">
+        <div class="brand-icon">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#00f0ff" stroke-width="3" stroke-dasharray="10, 5"/>
+            <circle cx="50" cy="50" r="32" fill="none" stroke="#ff7700" stroke-width="4"/>
+            <circle cx="50" cy="50" r="16" fill="#00f0ff"/>
+            <circle cx="50" cy="50" r="8" fill="#ffffff"/>
+          </svg>
+        </div>
+        <div class="brand-title">
+          <span class="brand-name">E.D.I.T.H.</span>
+          <span class="brand-subtitle">GALAXY S24 ULTRA // TITANIUM MK-XLV</span>
+        </div>
+      </div>
+
+      <div class="telemetry-badges">
+        <div class="telem-pill">
+          <div class="status-dot"></div>
+          <span id="headerTime">T+00:00:00</span>
+        </div>
+        <div class="telem-pill active">
+          <div class="status-dot orange"></div>
+          <span id="headerBattery">100%</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Viewport Container -->
+    <main class="view-container">
+
+      <!-- ==============================================
+           TAB 1: HUD & VOICE ASSISTANT (MAIN)
+           ============================================== -->
+      <section id="tabVoice" class="hud-tab-pane active">
+        <div class="reactor-hero-section">
+          <div class="reactor-wrapper" id="reactorWrapper" title="Appuyez pour parler à EDITH">
+            <div class="reactor-rings"></div>
+            <div class="reactor-rings-inner"></div>
+            <div class="reactor-core">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+              </svg>
+            </div>
+          </div>
+
+          <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
+          <div class="edith-status-text" id="edithStatusText">SYSTÈME NOMINAL // S24 ULTRA PRÊT</div>
+        </div>
+
+        <!-- Quick Tactical Chips -->
+        <div class="quick-chips-wrapper">
+          <button class="quick-chip" data-prompt="Donne-moi un rapport de situation complet de mes systèmes.">
+            <span>⚡</span> Rapport de situation
+          </button>
+          <button class="quick-chip" data-prompt="Quelles sont les capacités tactiques de mon terminal S24 Ultra ?">
+            <span>🛡️</span> Capacités S24 Ultra
+          </button>
+          <button class="quick-chip" data-prompt="Génère une idée de projet ou d'application révolutionnaire digne de Stark Industries.">
+            <span>💡</span> Idée Stark
+          </button>
+          <button class="quick-chip" data-prompt="Aide-moi à structurer et coder un algorithme optimisé.">
+            <span>💻</span> Code & Algorithmes
+          </button>
+          <button class="quick-chip" data-prompt="Raconte-moi l'histoire d'EDITH et de Tony Stark.">
+            <span>🕶️</span> Histoire EDITH
+          </button>
+        </div>
+
+        <!-- Dialogue Stream -->
+        <div class="dialogue-stream" id="dialogueStream"></div>
+
+        <!-- Bottom Input Bar -->
+        <div class="tactical-input-bar">
+          <button class="voice-main-btn" id="voiceMainBtn" title="Microphone / Voix EDITH">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+              <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+          </button>
+
+          <input type="text" id="messageInput" class="tactical-input" placeholder="Donnez un ordre à E.D.I.T.H..." autocomplete="off">
+
+          <button class="send-btn" id="sendBtn" title="Envoyer">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           TAB 2: AR TACTICAL VISION (CAMERA SCANNER)
+           ============================================== -->
+      <section id="tabVision" class="hud-tab-pane">
+        <div class="ar-view-pane">
+          <div class="camera-stream-wrapper">
+            <video id="cameraVideo" autoplay playsinline muted></video>
+            <canvas id="cameraCanvas"></canvas>
+
+            <div class="ar-hud-overlay">
+              <div class="ar-telemetry-badge">
+                [LUNETTES E.D.I.T.H. // CAPTEUR S24U 200MP]
+              </div>
+              <div class="ar-corners"></div>
+              <div class="ar-target-reticle"></div>
+              <div class="ar-scanline"></div>
+              <div class="ar-telemetry-badge" style="align-self: flex-end; border-color: var(--vision-orange); color: var(--vision-orange-bright);">
+                MULTIMODAL GEMINI IA
+              </div>
+            </div>
+          </div>
+
+          <div class="ar-controls-bar">
+            <button class="btn-icon" id="switchCamBtn" title="Inverser caméra">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 4v6h-6M1 20v-6h6"/>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+              </svg>
+            </button>
+
+            <button class="ar-scan-btn" id="arScanBtn">
+              ⚡ SCANNER LA CIBLE
+            </button>
+
+            <button class="btn-icon" id="torchBtn" title="Flash / Torche">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="ar-results-modal" id="arResultsModal">
+            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-cyan);padding-bottom:8px;margin-bottom:10px;">
+              <span style="color:var(--jarvis-blue);font-weight:700;font-size:13px;letter-spacing:1px;">
+                ⚡ RAPPORT D'ANALYSE OPTIQUE
+              </span>
+              <button class="btn-icon" id="closeArResults">✕</button>
+            </div>
+            <div id="arResultsText" style="overflow-y:auto;font-size:14px;line-height:1.6;user-select:text;">
+              Analyse en cours...
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           TAB 3: PROTOCOLES & OUTILS — ÉDITION PROPRE S24 ULTRA
+           ============================================== -->
+      <section id="tabTools" class="hud-tab-pane">
+        <div class="tools-view-pane">
+          
+          <!-- 1. Telemetry Dashboard -->
+          <div>
+            <div class="proto-section-header">
+              <span class="proto-section-title"><span>🛰️</span> TÉLÉMÉTRIE MATÉRIELLE S24 ULTRA</span>
+              <span class="proto-section-badge">SNAPDRAGON 8 GEN 3</span>
+            </div>
+            <div class="s24-telemetry-dashboard">
+              <div class="telemetry-tile">
+                <div class="telemetry-tile-icon">🔋</div>
+                <div class="telemetry-tile-label">BATTERIE 5000MAH</div>
+                <div class="telemetry-tile-val" id="telemBattery">98%</div>
+              </div>
+              <div class="telemetry-tile accent">
+                <div class="telemetry-tile-icon">🖥️</div>
+                <div class="telemetry-tile-label">AMOLED 2X 120HZ</div>
+                <div class="telemetry-tile-val" id="telemScreen">QHD+</div>
+              </div>
+              <div class="telemetry-tile">
+                <div class="telemetry-tile-icon">🛰️</div>
+                <div class="telemetry-tile-label">GPS ORBITAL</div>
+                <div class="telemetry-tile-val" id="telemCoords" style="font-size:10px;">Acquisition...</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- S Pen Status Banner -->
+          <div class="spen-status-card">
+            <div class="spen-status-left">
+              <span>✍️</span>
+              <span id="spenStatusText">S PEN STYLUS // PRÊT</span>
+            </div>
+            <span style="font-size:10px;font-family:var(--font-mono);color:var(--vision-orange-bright);">PALM REJECTION ON</span>
+          </div>
+
+          <!-- 2. Stark Tactical Pad (S Pen & Touch Drawing Canvas) -->
+          <div class="spen-canvas-card">
+            <div class="proto-section-header" style="border:none;margin-bottom:0;padding-bottom:0;">
+              <span class="proto-section-title"><span>🎨</span> STARK TACTICAL PAD (S PEN & TACTILE)</span>
+              <span class="proto-section-badge" id="canvasStatusBadge">PRECISION 4096 LVLS</span>
+            </div>
+            <div class="spen-canvas-wrapper">
+              <canvas id="spenCanvas"></canvas>
+            </div>
+            <div class="spen-toolbar">
+              <div class="spen-colors">
+                <button class="color-dot-btn active" data-color="#00f0ff" style="background:#00f0ff;"></button>
+                <button class="color-dot-btn" data-color="#ff7700" style="background:#ff7700;"></button>
+                <button class="color-dot-btn" data-color="#ffffff" style="background:#ffffff;"></button>
+                <button class="color-dot-btn" data-color="#ef4444" style="background:#ef4444;"></button>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button class="action-btn" id="clearCanvasBtn" style="height:32px;padding:0 10px;font-size:10.5px;">Effacer</button>
+                <button class="action-btn orange" id="saveCanvasBtn" style="height:32px;padding:0 10px;font-size:10.5px;">Analyser Pad</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Redesigned Mission Notes with Filters -->
+          <div>
+            <div class="proto-section-header">
+              <span class="proto-section-title"><span>📝</span> JOURNAL DE MISSION & MÉMOS VOCAUX</span>
+              <span class="proto-section-badge" id="notesCountBadge">0 NOTES</span>
+            </div>
+
+            <!-- Filter Pills -->
+            <div class="notes-filter-bar">
+              <button class="filter-btn active" data-filter="all">Toutes</button>
+              <button class="filter-btn" data-filter="mission">Missions</button>
+              <button class="filter-btn" data-filter="idee">Idées</button>
+              <button class="filter-btn" data-filter="urgent">Urgent</button>
+            </div>
+
+            <!-- Composer with category -->
+            <div class="note-composer-box">
+              <select id="noteCategorySelect" class="note-category-select">
+                <option value="mission">Mission</option>
+                <option value="idee">Idée</option>
+                <option value="urgent">Urgent</option>
+              </select>
+              <input type="text" id="noteInput" class="tactical-input" placeholder="Ajouter une consigne ou mémo...">
+              <button class="send-btn" id="addNoteBtn" style="width:40px;height:40px;">+</button>
+            </div>
+
+            <!-- Clean Note Stream -->
+            <div class="notes-stream" id="notesContainer"></div>
+          </div>
+
+          <!-- 4. Timer & Compass Grid -->
+          <div>
+            <div class="proto-section-header">
+              <span class="proto-section-title"><span>⏱️</span> MINUTEUR LED & BOUSSOLE AZIMUT</span>
+              <span class="proto-section-badge">ORIENTATION 3D</span>
+            </div>
+            <div class="timer-compass-grid">
+              <!-- Timer -->
+              <div class="clean-timer-card">
+                <span style="font-size:9px;font-family:var(--font-mono);color:var(--text-muted);letter-spacing:1px;">COMPTE À REBOURS</span>
+                <div class="timer-led" id="timerDisplay">00:00</div>
+                <div style="display:flex;gap:4px;width:100%;justify-content:center;">
+                  <button class="action-btn timer-preset-btn" data-seconds="60" style="height:28px;font-size:10px;">1m</button>
+                  <button class="action-btn timer-preset-btn" data-seconds="300" style="height:28px;font-size:10px;">5m</button>
+                  <button class="action-btn timer-preset-btn" data-seconds="900" style="height:28px;font-size:10px;">15m</button>
+                  <button class="action-btn orange" id="stopTimerBtn" style="height:28px;font-size:10px;">Stop</button>
+                </div>
+              </div>
+
+              <!-- Compass -->
+              <div class="clean-compass-card">
+                <span style="font-size:9px;font-family:var(--font-mono);color:var(--text-muted);letter-spacing:1px;">CAP MAGNÉTIQUE</span>
+                <div class="compass-visual">
+                  <div class="compass-arrow-needle" id="compassArrow"></div>
+                </div>
+                <span id="compassHeadingVal" style="font-size:12px;font-family:var(--font-mono);color:var(--jarvis-blue);font-weight:700;">0° N</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Emergency SOS Beacon -->
+          <div class="tool-card" style="border-color: rgba(239, 68, 68, 0.4);">
+            <div class="tool-card-title" style="color:var(--danger-red);">
+              <span>🚨 BALISE D'URGENCE SOS & BALISAGE</span>
+              <span style="font-size:10px;font-family:var(--font-mono);">MORSE TACTIQUE</span>
+            </div>
+            <p style="font-size:11.5px;color:var(--text-muted);margin-bottom:10px;line-height:1.4;">
+              Déclenche un flash stroboscopique plein écran et diffuse les coordonnées GPS exactes pour extraction.
+            </p>
+            <div style="display:flex;gap:8px;">
+              <button class="action-btn" id="sosBtn" style="border-color:var(--danger-red);color:var(--danger-red);">
+                DÉCLENCHER BALISE SOS
+              </button>
+              <button class="action-btn" id="copyCoordsBtn" style="font-size:10.5px;">
+                📋 Copier GPS
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==============================================
+           TAB 4: CONFIGURATION & SETTINGS
+           ============================================== -->
+      <section id="tabSettings" class="hud-tab-pane">
+        <div class="settings-view-pane">
+          
+          <!-- PWA Android Install Banner -->
+          <div class="tool-card" style="border-color:var(--vision-orange);">
+            <div class="tool-card-title" style="color:var(--vision-orange-bright);">
+              <span>📱 INSTALLATION SUR GALAXY S24 ULTRA</span>
+              <span style="font-size:10px;font-family:var(--font-mono);">PWA</span>
+            </div>
+            <p style="font-size:12px;color:var(--text-main);margin-bottom:12px;line-height:1.5;">
+              Installez E.D.I.T.H. comme une application native One UI avec icône Stark sur votre lanceur d'applications.
+            </p>
+            <button class="action-btn orange" id="installAppBtn" style="width:100%;height:44px;font-size:13px;">
+              📲 INSTALLER SUR MON S24 ULTRA
+            </button>
+          </div>
+
+          <!-- AI Provider Settings -->
+          <div class="tool-card">
+            <div class="tool-card-title">
+              <span>🧠 NOYAU D'INTELLIGENCE ARTIFICIELLE</span>
+            </div>
+            
+            <div class="setting-group">
+              <label class="setting-label">Fournisseur d'IA</label>
+              <select id="providerSelect" class="setting-select">
+                <option value="gemini">Google Gemini (Multimodal Vision & Audio)</option>
+                <option value="groq">Groq Cloud (Llama 3.3 - Vitesse Éclair)</option>
+                <option value="openai">OpenAI (GPT-4o-mini)</option>
+                <option value="offline">Mode Autonome E.D.I.T.H. (Hors Ligne / Sans Clé)</option>
+              </select>
+            </div>
+
+            <div class="setting-group" style="margin-top:10px;">
+              <label class="setting-label">Clé API (Sauvegardée localement)</label>
+              <input type="password" id="apiKeyInput" class="setting-input" placeholder="Collez votre clé API ici (ex: AIzaSy...)">
+              <span style="font-size:10px;font-family:var(--font-mono);color:var(--text-muted);">Stockage 100% sécurisé et local sur votre S24 Ultra.</span>
+            </div>
+
+            <div class="setting-group" style="margin-top:10px;">
+              <label class="setting-label">Modèle IA</label>
+              <select id="modelSelect" class="setting-select">
+                <option value="gemini-1.5-flash">gemini-1.5-flash (Ultra Rapide & Vision)</option>
+                <option value="gemini-2.0-flash">gemini-2.0-flash (Nouvelle génération)</option>
+                <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (Groq)</option>
+                <option value="gpt-4o-mini">gpt-4o-mini (OpenAI)</option>
+              </select>
+            </div>
+
+            <div class="setting-group" style="margin-top:10px;">
+              <label class="setting-label">Nom de l'utilisateur / Indicatif</label>
+              <input type="text" id="userCallsignInput" class="setting-input" placeholder="Monsieur, Commandant, Benoît...">
+            </div>
+          </div>
+
+          <!-- Speech & Voice Customization -->
+          <div class="tool-card">
+            <div class="tool-card-title">
+              <span>🗣️ VOIX D'E.D.I.T.H. & SYNTHÈSE</span>
+            </div>
+            
+            <div class="setting-group">
+              <label class="setting-label">Sélection de la voix vocale</label>
+              <select id="voiceSelect" class="setting-select"></select>
+            </div>
+
+            <div class="action-btn-row">
+              <button class="action-btn" id="testVoiceBtn">🔊 Tester la voix</button>
+            </div>
+          </div>
+
+          <!-- Save and Maintenance -->
+          <div class="action-btn-row">
+            <button class="action-btn orange" id="saveSettingsBtn">💾 ENREGISTRER LES PROTOCOLES</button>
+            <button class="action-btn" id="clearChatBtn" style="border-color:var(--danger-red);color:var(--danger-red);">🗑️ Effacer chat</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom HUD Navigation -->
+    <nav class="hud-bottom-nav">
+      <button class="nav-tab-item active" data-tab="tabVoice">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 8v8M8 12h8"/>
+        </svg>
+        <span>Voix HUD</span>
+      </button>
+
+      <button class="nav-tab-item" data-tab="tabVision">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/>
+        </svg>
+        <span>Vision AR</span>
+      </button>
+
+      <button class="nav-tab-item" data-tab="tabTools">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+        </svg>
+        <span>Protocoles</span>
+      </button>
+
+      <button class="nav-tab-item" data-tab="tabSettings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        <span>Paramètres</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- App Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/speech.js"></script>
+  <script src="js/ai-service.js"></script>
+  <script src="js/vision-scanner.js"></script>
+  <script src="js/tools-s24.js"></script>
+  <script src="js/app-s24.js"></script>
+</body>
+</html>
