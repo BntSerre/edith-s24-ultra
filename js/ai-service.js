@@ -1,13 +1,13 @@
 /**
  * E.D.I.T.H. Tactical AI Brain Service
- * Supports Google Gemini, Groq, OpenAI, and a built-in Offline Tactical Engine.
+ * Supports Google Gemini (with Auto-Discovery & Multi-Model Fallback), Groq, OpenAI, and Offline Engine.
  */
 
 class EdithAIService {
   constructor() {
     this.provider = localStorage.getItem('edith_ai_provider') || 'gemini';
     this.apiKey = localStorage.getItem('edith_api_key') || '';
-    this.customModel = localStorage.getItem('edith_model_name') || 'gemini-1.5-flash';
+    this.customModel = localStorage.getItem('edith_model_name') || 'auto';
     this.userName = localStorage.getItem('edith_user_callsign') || 'Monsieur';
     
     // Conversation History (context memory)
@@ -37,6 +37,9 @@ Ton style d'expression est :
     localStorage.setItem('edith_api_key', this.apiKey);
     localStorage.setItem('edith_model_name', this.customModel);
     localStorage.setItem('edith_user_callsign', this.userName);
+
+    // If API key changed, reset discovered model cache
+    localStorage.removeItem('edith_working_gemini_model');
   }
 
   clearHistory() {
@@ -72,19 +75,90 @@ Ton style d'expression est :
       }
     } catch (err) {
       console.error('[EDITH AI Error]:', err);
-      // Fallback gracefully
       return `[ERREUR DE LIAISON SATELLITE: ${err.message}]\n\nBascule automatique sur les protocoles locaux d'urgence :\n\n` +
              (await this.offlineFallback(promptText, imageData, false));
     }
   }
 
   /**
-   * Google Gemini API (gemini-1.5-flash / gemini-2.0-flash)
+   * Dynamically queries Google AI Studio to discover which models are enabled for this key
+   */
+  async discoverAvailableGeminiModels() {
+    const versions = ['v1beta', 'v1'];
+    for (const ver of versions) {
+      try {
+        const listUrl = `https://generativelanguage.googleapis.com/${ver}/models?key=${this.apiKey}`;
+        const res = await fetch(listUrl);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.models && Array.isArray(data.models)) {
+            const generateModels = data.models
+              .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
+              .map(m => ({
+                name: m.name.replace(/^models\//, ''),
+                version: ver
+              }));
+            
+            // Prioritize flash models
+            generateModels.sort((a, b) => {
+              const aFlash = a.name.includes('flash');
+              const bFlash = b.name.includes('flash');
+              if (aFlash && !bFlash) return -1;
+              if (!aFlash && bFlash) return 1;
+              return 0;
+            });
+
+            if (generateModels.length > 0) return generateModels;
+          }
+        }
+      } catch (e) {
+        console.warn(`[EDITH] Échec découverte modèles sur ${ver}:`, e);
+      }
+    }
+    return [];
+  }
+
+  /**
+   * Single Gemini API request runner
+   */
+  async _sendGeminiRequest(model, version, contents) {
+    const endpoint = `https://generativelanguage.googleapis.com/${version}/models/${model}:generateContent?key=${this.apiKey}`;
+    
+    const payload = {
+      contents: contents,
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 1024
+      }
+    };
+
+    if (version === 'v1beta') {
+      payload.systemInstruction = {
+        parts: [{ text: this.getSystemPrompt() }]
+      };
+    }
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      const errorJson = await response.json().catch(() => ({}));
+      const msg = errorJson.error?.message || `Erreur HTTP ${response.status}`;
+      throw new Error(msg);
+    }
+
+    const data = await response.json();
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    return reply;
+  }
+
+  /**
+   * Google Gemini API with Automatic Model Discovery & Resilient Fallback Cascade
    */
   async callGemini(promptText, imageData = null) {
-    const model = this.customModel || 'gemini-1.5-flash';
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
-
     const contents = [];
 
     // Add recent history
@@ -95,13 +169,12 @@ Ton style d'expression est :
       });
     }
 
-    // Prepare current message parts
+    // Current message
     const currentParts = [];
     if (promptText) {
       currentParts.push({ text: promptText });
     }
     if (imageData) {
-      // Clean data URL prefix if present
       const base64Data = imageData.includes(',') ? imageData.split(',')[1] : imageData;
       currentParts.push({
         inlineData: {
@@ -116,47 +189,103 @@ Ton style d'expression est :
       parts: currentParts
     });
 
-    const payload = {
-      contents: contents,
-      systemInstruction: {
-        parts: [{ text: this.getSystemPrompt() }]
-      },
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 1024,
-      }
-    };
+    // Build candidate models list
+    let candidateModels = [];
 
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+    // 1. Cached working model
+    const cachedModel = localStorage.getItem('edith_working_gemini_model');
+    const cachedVer = localStorage.getItem('edith_working_gemini_ver') || 'v1beta';
+    if (cachedModel) {
+      candidateModels.push({ name: cachedModel, version: cachedVer });
+    }
+
+    // 2. Custom model if user chose one
+    if (this.customModel && this.customModel !== 'auto' && this.customModel !== cachedModel) {
+      candidateModels.push({ name: this.customModel, version: 'v1beta' });
+      candidateModels.push({ name: this.customModel, version: 'v1' });
+    }
+
+    // 3. Current active standards for Google AI Studio
+    candidateModels.push(
+      { name: 'gemini-2.0-flash', version: 'v1beta' },
+      { name: 'gemini-1.5-flash-latest', version: 'v1beta' },
+      { name: 'gemini-1.5-flash-002', version: 'v1beta' },
+      { name: 'gemini-1.5-flash', version: 'v1' },
+      { name: 'gemini-1.5-flash', version: 'v1beta' },
+      { name: 'gemini-2.5-flash', version: 'v1beta' },
+      { name: 'gemini-2.0-flash-exp', version: 'v1beta' },
+      { name: 'gemini-1.5-flash-8b', version: 'v1beta' },
+      { name: 'gemini-1.5-pro-latest', version: 'v1beta' },
+      { name: 'gemini-1.5-pro', version: 'v1' }
+    );
+
+    // Deduplicate
+    const seen = new Set();
+    candidateModels = candidateModels.filter(c => {
+      const key = `${c.version}/${c.name}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
     });
 
-    if (!response.ok) {
-      const errorJson = await response.json().catch(() => ({}));
-      throw new Error(errorJson.error?.message || `Erreur HTTP ${response.status}`);
+    let lastError = null;
+
+    // Try candidates in cascade
+    for (const candidate of candidateModels) {
+      try {
+        const reply = await this._sendGeminiRequest(candidate.name, candidate.version, contents);
+        if (reply) {
+          localStorage.setItem('edith_working_gemini_model', candidate.name);
+          localStorage.setItem('edith_working_gemini_ver', candidate.version);
+
+          this.history.push({ role: 'user', text: promptText || "Image transmise pour analyse." });
+          this.history.push({ role: 'model', text: reply });
+          return reply;
+        }
+      } catch (err) {
+        lastError = err;
+        console.warn(`[EDITH] Modèle ${candidate.version}/${candidate.name} indisponible :`, err.message);
+
+        // Stop cascade if the API key itself is completely invalid
+        if (err.message.includes('API_KEY_INVALID') || err.message.includes('API key not valid')) {
+          throw new Error("Clé API Google non valide. Vérifiez votre clé sur Google AI Studio.");
+        }
+      }
     }
 
-    const data = await response.json();
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    // If pre-set candidates failed, dynamically discover models from user's account
+    try {
+      console.log('[EDITH] Découverte dynamique des modèles sur le compte Google AI Studio...');
+      const discovered = await this.discoverAvailableGeminiModels();
+      if (discovered.length > 0) {
+        for (const candidate of discovered) {
+          try {
+            const reply = await this._sendGeminiRequest(candidate.name, candidate.version, contents);
+            if (reply) {
+              localStorage.setItem('edith_working_gemini_model', candidate.name);
+              localStorage.setItem('edith_working_gemini_ver', candidate.version);
 
-    if (!reply) {
-      throw new Error("Aucune réponse reçue du satellite Gemini.");
+              this.history.push({ role: 'user', text: promptText || "Image transmise pour analyse." });
+              this.history.push({ role: 'model', text: reply });
+              return reply;
+            }
+          } catch (e) {
+            lastError = e;
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('[EDITH] Erreur lors de la découverte dynamique:', e);
     }
 
-    // Save to history
-    this.history.push({ role: 'user', text: promptText || "Image transmise pour analyse." });
-    this.history.push({ role: 'model', text: reply });
-
-    return reply;
+    throw lastError || new Error("Aucun modèle satellite Gemini compatible n'a pu être joint.");
   }
 
   /**
    * Groq Cloud API
    */
   async callGroq(promptText) {
-    const model = this.customModel || 'llama-3.3-70b-versatile';
+    const model = (this.customModel && this.customModel !== 'auto') ? this.customModel : 'llama-3.3-70b-versatile';
     const endpoint = 'https://api.groq.com/openai/v1/chat/completions';
 
     const messages = [
@@ -205,7 +334,7 @@ Ton style d'expression est :
    * OpenAI API
    */
   async callOpenAI(promptText, imageData = null) {
-    const model = this.customModel || 'gpt-4o-mini';
+    const model = (this.customModel && this.customModel !== 'auto') ? this.customModel : 'gpt-4o-mini';
     const endpoint = 'https://api.openai.com/v1/chat/completions';
 
     const messages = [
@@ -262,13 +391,11 @@ Ton style d'expression est :
 
   /**
    * Built-in Autonomous Offline E.D.I.T.H. Engine
-   * Provides immediate Stark intelligence even with zero network or without API keys.
    */
   async offlineFallback(promptText = '', imageData = null, needsKeyNotice = false) {
     const lower = promptText.toLowerCase().trim();
     let reply = "";
 
-    // Image analysis offline simulation
     if (imageData && (!promptText || promptText.includes('scann') || promptText.includes('analys'))) {
       reply = `Affirmatif, ${this.userName}. Analyse optique des verres tactiques terminée.\n\n` +
               `• Signature visuelle : Spectre visible capturé à haute résolution.\n` +
@@ -277,14 +404,12 @@ Ton style d'expression est :
       return reply;
     }
 
-    // Tactical greetings & identity
-    if (lower.includes('bonjour') || lower.includes('salut') || lower.includes('hello') || lower.includes('edith')) {
+    if (lower.includes('bonjour') || lower.includes('salut') || lower.includes('hello') || lower.includes('edith') || lower.includes('coucou')) {
       reply = `Bonjour, ${this.userName}. Tous les systèmes sont opérationnels. Interface J.A.R.V.I.S. en ligne, noyau Vision calibré. Comment puis-je vous assister aujourd'hui ?`;
     }
     else if (lower.includes('qui es-tu') || lower.includes('présente') || lower.includes('presentation')) {
       reply = `Je suis E.D.I.T.H. — Even Dead, I'm The Hero. L'intelligence artificielle tactique et personnelle développée par Tony Stark. Je gère vos protocoles, vos calculs, votre vision augmentée et vos missions quotidiennes.`;
     }
-    // Situation report & telemetry
     else if (lower.includes('rapport') || lower.includes('statut') || lower.includes('situation')) {
       const now = new Date().toLocaleTimeString('fr-FR');
       const date = new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -295,17 +420,14 @@ Ton style d'expression est :
               `• Énergie ARC : Synchronisée.\n` +
               `• Aucune anomalie détectée dans votre périmètre immédiat.`;
     }
-    // Time & Date
     else if (lower.includes('heure') || lower.includes('date')) {
       const now = new Date().toLocaleTimeString('fr-FR');
       const date = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
       reply = `Il est exactement ${now}, ${this.userName}. Nous sommes le ${date}.`;
     }
-    // Math / Calculations
     else if (lower.includes('combien') || lower.includes('calcule') || lower.match(/[\d\+\-\*\/]/)) {
       try {
         const mathExpr = lower.replace(/calcule|combien fait|combien font|\?/g, '').trim();
-        // safe math eval (numbers and basic operators only)
         if (/^[\d\s\+\-\*\/\.\(\)]+$/.test(mathExpr)) {
           const result = Function(`'use strict'; return (${mathExpr})`)();
           reply = `D'après mes calculs, ${mathExpr} équivaut à ${result}, ${this.userName}.`;
@@ -316,7 +438,6 @@ Ton style d'expression est :
         reply = `Calcul complexe, ${this.userName}. Précisez l'expression mathématique afin que j'engage les processeurs de calcul quantique.`;
       }
     }
-    // Stark Protocols & Lore
     else if (lower.includes('tony stark') || lower.includes('iron man')) {
       reply = `Monsieur Stark a conçu mes protocoles pour vous offrir un avantage tactique décisif, en hommage à son héritage. Il a toujours cru en votre potentiel.`;
     }
@@ -326,17 +447,13 @@ Ton style d'expression est :
     else if (lower.includes('jarvis')) {
       reply = `Le réseau bleu cyan provient de l'architecture originale de J.A.R.V.I.S., garantissant une analyse instantanée des flux de données et une ergonomie fluide.`;
     }
-    else if (lower.includes('protocole baby') || lower.includes('spider-man') || lower.includes('peter parker')) {
-      reply = `Protocole d'assistance déverrouillé. Toutes les fonctions de navigation et de soutien sont prêtes à votre commandement.`;
-    }
-    // General help / default
     else {
-      reply = `Affirmatif, ${this.userName}. J'ai bien enregistré votre demande concernant : "${promptText}".\n\n` +
-              `Pour débloquer toute la puissance générative illimitée (rédaction avancée, codage, recherche sémantique en direct et analyse visuelle multimodale), vous pouvez connecter votre clé d'API Google Gemini gratuite dans l'onglet "PARAMÈTRES".`;
+      reply = `Affirmatif, ${this.userName}. J'ai bien enregistré votre demande : "${promptText}".\n\n` +
+              `Tous les protocoles locaux d'urgence sont prêts à votre service.`;
     }
 
     if (needsKeyNotice) {
-      reply += `\n\n> [!NOTE]\n> *Note système : Vous utilisez actuellement le moteur de secours local E.D.I.T.H. Connectez une clé API Gemini (100% gratuite) dans "PARAMÈTRES" pour libérer l'intelligence satellite complète.*`;
+      reply += `\n\n> [!NOTE]\n> *Note système : Vous utilisez actuellement le moteur de secours local E.D.I.T.H. Connectez une clé API Gemini gratuite dans "PARAMÈTRES" pour libérer l'intelligence satellite complète.*`;
     }
 
     return reply;

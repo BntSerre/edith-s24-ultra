@@ -675,7 +675,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function initSettingsUI() {
     if (providerSelect) providerSelect.value = window.edithAI.provider;
     if (apiKeyInput) apiKeyInput.value = window.edithAI.apiKey;
-    if (modelSelect) modelSelect.value = window.edithAI.customModel;
+    if (modelSelect) {
+      const exists = Array.from(modelSelect.options).some(o => o.value === window.edithAI.customModel);
+      modelSelect.value = exists ? window.edithAI.customModel : 'auto';
+    }
     if (userCallsignInput) userCallsignInput.value = window.edithAI.userName;
 
     const populateVoices = () => {
