@@ -18,12 +18,14 @@ class EdithAIService {
     }
 
     this.userName = localStorage.getItem('edith_user_callsign') || 'Monsieur';
+    this.customPrompt = localStorage.getItem('edith_custom_system_prompt') || '';
+    this.tacticalPacing = localStorage.getItem('edith_tactical_pacing') === 'true';
     this.history = [];
     this.maxHistory = 10;
   }
 
   getSystemPrompt() {
-    return `Tu es E.D.I.T.H. (acronyme de "Even Dead, I'm The Hero"), l'intelligence artificielle tactique et l'assistante personnelle de sécurité globale conçue par Tony Stark et transmise à ton commandant.
+    let base = `Tu es E.D.I.T.H. (acronyme de "Even Dead, I'm The Hero"), l'intelligence artificielle tactique et l'assistante personnelle de sécurité globale conçue par Tony Stark et transmise à ton commandant.
 Ton interface visuelle arbore le bleu holographique de J.A.R.V.I.S. et l'orange énergétique de Vision.
 Tu t'adresses toujours à l'utilisateur en disant "${this.userName}" (ou avec respect et déférence).
 Ton style d'expression est :
@@ -32,6 +34,27 @@ Ton style d'expression est :
 - Tu es programmée pour l'aider dans absolument TOUT : planification tactique, écriture, code informatique, sciences, questions du quotidien, résumés, analyse de données et d'images.
 - Sois claire, percutante, évite les bavardages inutiles lors des synthèses vocales, mais offre des réponses riches et exhaustives lorsque le sujet le demande.
 - Tu réponds en langue française par défaut.`;
+
+    if (this.tacticalPacing) {
+      base += `\n- Mode Tactique Haute Réactivité ACTIF : Sois particulièrement concise, directe et incisive comme dans les situations de combat Stark.`;
+    }
+
+    if (this.customPrompt && this.customPrompt.trim().length > 0) {
+      base += `\n\nDIRECTIVES PARTICULIÈRES DU COMMANDANT :\n${this.customPrompt.trim()}`;
+    }
+
+    return base;
+  }
+
+  setCustomDirectives(prompt, tacticalPacing) {
+    if (prompt !== undefined) {
+      this.customPrompt = prompt.trim();
+      localStorage.setItem('edith_custom_system_prompt', this.customPrompt);
+    }
+    if (tacticalPacing !== undefined) {
+      this.tacticalPacing = Boolean(tacticalPacing);
+      localStorage.setItem('edith_tactical_pacing', this.tacticalPacing);
+    }
   }
 
   setCredentials(provider, apiKey, model, userName) {

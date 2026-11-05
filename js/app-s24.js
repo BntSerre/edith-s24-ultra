@@ -306,12 +306,15 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const reply = await window.edithAI.ask(text);
       appendMessage('edith', reply);
-      setReactorState('speaking', 'SYNTHÈSE VOCALE...');
-
-      window.edithAudio.speak(reply, 
-        () => setReactorState('speaking'),
-        () => setReactorState('idle')
-      );
+      if (window.edithAudio.autoSpeak) {
+        setReactorState('speaking', 'SYNTHÈSE VOCALE...');
+        window.edithAudio.speak(reply, 
+          () => setReactorState('speaking'),
+          () => setReactorState('idle')
+        );
+      } else {
+        setReactorState('idle');
+      }
     } catch (err) {
       appendMessage('edith', `Erreur système : ${err.message}`);
       setReactorState('idle');
@@ -712,18 +715,136 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function initSettingsUI() {
-    if (providerSelect) providerSelect.value = window.edithAI.provider;
-    if (apiKeyInput) apiKeyInput.value = window.edithAI.apiKey;
-    if (modelSelect) {
-      const exists = Array.from(modelSelect.options).some(o => o.value === window.edithAI.customModel);
-      modelSelect.value = exists ? window.edithAI.customModel : 'auto';
+  function syncModelSelectOptions(provider, selectedModel) {
+    if (!modelSelect) return;
+    modelSelect.innerHTML = '';
+
+    const modelsByProvider = {
+      gemini: [
+        { value: 'auto', label: '⚡ Auto-Détection Intelligente (Recommandé)' },
+        { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash (Rapide & Multimodal)' },
+        { value: 'gemini-1.5-flash-latest', label: 'Gemini 1.5 Flash (Dernière version)' },
+        { value: 'gemini-1.5-flash-002', label: 'Gemini 1.5 Flash 002' },
+        { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash' },
+        { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+        { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro (Raisonnement Complexe)' }
+      ],
+      groq: [
+        { value: 'llama-3.3-70b-versatile', label: 'Llama 3.3 70B Versatile (Recommandé Groq)' },
+        { value: 'llama-3.1-8b-instant', label: 'Llama 3.1 8B Instant (Ultra Rapide)' },
+        { value: 'mixtral-8x7b-32768', label: 'Mixtral 8x7B (Fenêtre 32k)' }
+      ],
+      openai: [
+        { value: 'gpt-4o-mini', label: 'GPT-4o Mini (Recommandé OpenAI)' },
+        { value: 'gpt-4o', label: 'GPT-4o (Complet)' },
+        { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' }
+      ],
+      offline: [
+        { value: 'offline-edith', label: 'Moteur E.D.I.T.H. Local (Sans Clé / Hors-Ligne)' }
+      ]
+    };
+
+    const list = modelsByProvider[provider] || modelsByProvider.gemini;
+    list.forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m.value;
+      opt.textContent = m.label;
+      if (m.value === selectedModel) opt.selected = true;
+      modelSelect.appendChild(opt);
+    });
+
+    if (modelSelect.selectedIndex === -1 && modelSelect.options.length > 0) {
+      modelSelect.selectedIndex = 0;
     }
-    if (userCallsignInput) userCallsignInput.value = window.edithAI.userName;
+  }
+
+  function initSettingsUI() {
+    if (providerSelect) {
+      providerSelect.value = window.edithAI.provider;
+      syncModelSelectOptions(providerSelect.value, window.edithAI.customModel);
+      providerSelect.addEventListener('change', () => {
+        syncModelSelectOptions(providerSelect.value);
+        updateSettingsStatus();
+      });
+    }
+
+    if (apiKeyInput) {
+      apiKeyInput.value = window.edithAI.apiKey;
+      apiKeyInput.addEventListener('input', updateSettingsStatus);
+    }
+
+    if (userCallsignInput) {
+      userCallsignInput.value = window.edithAI.userName;
+    }
+
+    // Interactive Functions Toggles
+    const featureAutoSpeak = document.getElementById('featureAutoSpeak');
+    const featureSoundFx = document.getElementById('featureSoundFx');
+    const featureTacticalPacing = document.getElementById('featureTacticalPacing');
+
+    if (featureAutoSpeak) {
+      featureAutoSpeak.checked = window.edithAudio.autoSpeak;
+      featureAutoSpeak.addEventListener('change', () => {
+        triggerHaptic('light');
+        window.edithAudio.autoSpeak = featureAutoSpeak.checked;
+      });
+    }
+
+    if (featureSoundFx) {
+      featureSoundFx.checked = window.edithAudio.soundEnabled;
+      featureSoundFx.addEventListener('change', () => {
+        triggerHaptic('light');
+        window.edithAudio.soundEnabled = featureSoundFx.checked;
+      });
+    }
+
+    if (featureTacticalPacing) {
+      featureTacticalPacing.checked = window.edithAI.tacticalPacing;
+      featureTacticalPacing.addEventListener('change', () => {
+        triggerHaptic('light');
+        window.edithAI.tacticalPacing = featureTacticalPacing.checked;
+      });
+    }
+
+    // Sliders
+    const voiceRateSlider = document.getElementById('voiceRateSlider');
+    const voiceRateVal = document.getElementById('voiceRateVal');
+    const voicePitchSlider = document.getElementById('voicePitchSlider');
+    const voicePitchVal = document.getElementById('voicePitchVal');
+
+    if (voiceRateSlider && voiceRateVal) {
+      voiceRateSlider.value = window.edithAudio.voiceRate;
+      voiceRateVal.textContent = Number(window.edithAudio.voiceRate).toFixed(2) + 'x';
+      voiceRateSlider.addEventListener('input', () => {
+        voiceRateVal.textContent = Number(voiceRateSlider.value).toFixed(2) + 'x';
+        window.edithAudio.voiceRate = parseFloat(voiceRateSlider.value);
+      });
+    }
+
+    if (voicePitchSlider && voicePitchVal) {
+      voicePitchSlider.value = window.edithAudio.voicePitch;
+      voicePitchVal.textContent = Number(window.edithAudio.voicePitch).toFixed(2);
+      voicePitchSlider.addEventListener('input', () => {
+        voicePitchVal.textContent = Number(voicePitchSlider.value).toFixed(2);
+        window.edithAudio.voicePitch = parseFloat(voicePitchSlider.value);
+      });
+    }
+
+    // Custom Directives Prompt
+    const customPromptInput = document.getElementById('customPromptInput');
+    const resetPromptBtn = document.getElementById('resetPromptBtn');
+    if (customPromptInput) {
+      customPromptInput.value = window.edithAI.customPrompt;
+    }
+    if (resetPromptBtn && customPromptInput) {
+      resetPromptBtn.addEventListener('click', () => {
+        triggerHaptic('medium');
+        customPromptInput.value = '';
+        window.edithAudio.playBeep(440, 0.05);
+      });
+    }
 
     updateSettingsStatus();
-    if (apiKeyInput) apiKeyInput.addEventListener('input', updateSettingsStatus);
-    if (providerSelect) providerSelect.addEventListener('change', updateSettingsStatus);
 
     // Visibility toggle for API Key
     const toggleApiKeyVisibility = document.getElementById('toggleApiKeyVisibility');
@@ -769,6 +890,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     populateVoices();
     setTimeout(populateVoices, 1000);
+    window.onEdithVoicesLoaded = populateVoices;
   }
 
   if (saveSettingsBtn) {
@@ -780,10 +902,35 @@ document.addEventListener('DOMContentLoaded', () => {
         modelSelect.value,
         userCallsignInput.value
       );
-      if (voiceSelect) window.edithAudio.setVoice(voiceSelect.value);
+
+      const customPromptInput = document.getElementById('customPromptInput');
+      const featureTacticalPacing = document.getElementById('featureTacticalPacing');
+      if (customPromptInput) {
+        window.edithAI.setCustomDirectives(
+          customPromptInput.value,
+          featureTacticalPacing ? featureTacticalPacing.checked : false
+        );
+      }
+
+      const voiceRateSlider = document.getElementById('voiceRateSlider');
+      const voicePitchSlider = document.getElementById('voicePitchSlider');
+      const featureSoundFx = document.getElementById('featureSoundFx');
+      const featureAutoSpeak = document.getElementById('featureAutoSpeak');
+
+      window.edithAudio.setAudioParams(
+        voiceRateSlider ? voiceRateSlider.value : 1.05,
+        voicePitchSlider ? voicePitchSlider.value : 1.0,
+        featureSoundFx ? featureSoundFx.checked : true,
+        featureAutoSpeak ? featureAutoSpeak.checked : true
+      );
+
+      if (voiceSelect) {
+        window.edithAudio.setVoice(voiceSelect.value);
+      }
+
       updateSettingsStatus();
       window.edithAudio.playSuccess();
-      alert("Paramètres S24 Ultra enregistrés avec succès !");
+      alert("✓ TOUS LES PROTOCOLES & FONCTIONS E.D.I.T.H. ONT ÉTÉ ENREGISTRÉS AVEC SUCCÈS SUR S24 ULTRA !");
     });
   }
 

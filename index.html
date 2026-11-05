@@ -18,7 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
   <!-- S24 Ultra HUD CSS -->
-  <link rel="stylesheet" href="css/hud-s24.css?v=2.0.3">
+  <link rel="stylesheet" href="css/hud-s24.css?v=2.0.4">
 </head>
 <body>
   <!-- HUD Background Overlays -->
@@ -358,7 +358,7 @@
             <button class="pwa-install-mini-btn" id="installAppBtn">📲 INSTALLER</button>
           </div>
 
-          <!-- AI Engine & Satellite Link -->
+          <!-- 1. AI Engine & Satellite Link -->
           <div class="tool-card">
             <div class="tool-card-title">
               <span>🧠 NOYAU D'INTELLIGENCE ARTIFICIELLE</span>
@@ -402,7 +402,86 @@
             </div>
           </div>
 
-          <!-- User Identity & Callsign -->
+          <!-- 2. Interactive Stark Functions & Protocols (ON/OFF Toggles) -->
+          <div class="tool-card">
+            <div class="tool-card-title">
+              <span>⚡ FONCTIONS & PROTOCOLES ACTIFS D'E.D.I.T.H.</span>
+              <span class="tool-card-badge" style="color:var(--vision-orange-bright);border-color:var(--border-orange);">MODIFIABLE</span>
+            </div>
+            
+            <div class="hud-feature-list">
+              <!-- Feature 1: Auto Speak -->
+              <div class="hud-feature-row">
+                <div class="hud-feature-info">
+                  <div class="hud-feature-title">🗣️ Réponse vocale automatique</div>
+                  <div class="hud-feature-desc">EDITH lit à haute voix chaque réponse textuelle</div>
+                </div>
+                <label class="hud-switch">
+                  <input type="checkbox" id="featureAutoSpeak" checked>
+                  <span class="hud-switch-slider"></span>
+                </label>
+              </div>
+
+              <!-- Feature 2: Stark Sound FX -->
+              <div class="hud-feature-row">
+                <div class="hud-feature-info">
+                  <div class="hud-feature-title">🔊 Effets sonores Stark HUD</div>
+                  <div class="hud-feature-desc">Bruitages futuristes lors des clics, analyses et alertes</div>
+                </div>
+                <label class="hud-switch">
+                  <input type="checkbox" id="featureSoundFx" checked>
+                  <span class="hud-switch-slider"></span>
+                </label>
+              </div>
+
+              <!-- Feature 3: Tactical Pacing -->
+              <div class="hud-feature-row">
+                <div class="hud-feature-info">
+                  <div class="hud-feature-title">🎯 Mode Haute Réactivité (Style Combat)</div>
+                  <div class="hud-feature-desc">Réponses incisives, tactiques et ultra-concises</div>
+                </div>
+                <label class="hud-switch">
+                  <input type="checkbox" id="featureTacticalPacing">
+                  <span class="hud-switch-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Voice Synthesizer & Acoustic Sliders -->
+          <div class="tool-card">
+            <div class="tool-card-title">
+              <span>🗣️ SYNTHÈSE VOCALE & RÉGLAGES ACOUSTIQUES</span>
+            </div>
+            
+            <div class="setting-group">
+              <label class="setting-label">Sélection du timbre vocal</label>
+              <div class="voice-row-wrapper">
+                <select id="voiceSelect" class="setting-select" style="flex:1;"></select>
+                <button class="action-btn" id="testVoiceBtn" style="width:auto;padding:0 14px;white-space:nowrap;flex-shrink:0;">🔊 Tester</button>
+              </div>
+            </div>
+
+            <!-- Speech Rate Slider -->
+            <div class="hud-slider-group">
+              <div class="hud-slider-header">
+                <span class="setting-label">⚡ Vitesse d'élocution</span>
+                <span class="hud-slider-value" id="voiceRateVal">1.05x</span>
+              </div>
+              <input type="range" id="voiceRateSlider" min="0.75" max="1.4" step="0.05" value="1.05" class="hud-range-slider">
+            </div>
+
+            <!-- Speech Pitch Slider -->
+            <div class="hud-slider-group">
+              <div class="hud-slider-header">
+                <span class="setting-label">🎚️ Tonalité vocale (Pitch)</span>
+                <span class="hud-slider-value" id="voicePitchVal">1.00</span>
+              </div>
+              <input type="range" id="voicePitchSlider" min="0.8" max="1.3" step="0.05" value="1.0" class="hud-range-slider">
+            </div>
+          </div>
+
+          <!-- 4. User Identity & Callsign -->
           <div class="tool-card">
             <div class="tool-card-title">
               <span>👤 IDENTITÉ & INDICATIF TACTIQUE</span>
@@ -415,28 +494,30 @@
                 <button type="button" class="callsign-chip" data-callsign="Benoît">Benoît</button>
                 <button type="button" class="callsign-chip" data-callsign="Commandant">Commandant</button>
                 <button type="button" class="callsign-chip" data-callsign="Boss">Boss</button>
+                <button type="button" class="callsign-chip" data-callsign="Tony">Tony</button>
               </div>
             </div>
           </div>
 
-          <!-- Voice & Speech Engine -->
+          <!-- 5. System Directives & Personality Customization -->
           <div class="tool-card">
             <div class="tool-card-title">
-              <span>🗣️ SYNTHÈSE VOCALE D'E.D.I.T.H.</span>
+              <span>🧠 DIRECTIVES DU COMMANDANT (PERSONNALITÉ MODIFIABLE)</span>
             </div>
             <div class="setting-group">
-              <label class="setting-label">Sélection du timbre vocal</label>
-              <div class="voice-row-wrapper">
-                <select id="voiceSelect" class="setting-select" style="flex:1;"></select>
-                <button class="action-btn" id="testVoiceBtn" style="width:auto;padding:0 14px;white-space:nowrap;flex-shrink:0;">🔊 Tester</button>
+              <div class="setting-label-row">
+                <label class="setting-label">Consignes spéciales pour E.D.I.T.H.</label>
+                <button type="button" class="btn-text-reset" id="resetPromptBtn">↺ Rétablir</button>
               </div>
+              <textarea id="customPromptInput" class="setting-textarea" rows="3" placeholder="Ex: 'Sois sarcastique et rapide comme JARVIS', 'Donne-moi toujours le code en premier', etc."></textarea>
+              <span class="setting-note">Ces instructions sont injectées directement dans le processeur neural d'E.D.I.T.H.</span>
             </div>
           </div>
 
-          <!-- Tactical Control Center (Actions) -->
+          <!-- 6. Tactical Action Center -->
           <div class="settings-actions-box">
             <button class="action-btn-main orange" id="saveSettingsBtn">
-              <span>💾</span> ENREGISTRER LES PROTOCOLES
+              <span>💾</span> ENREGISTRER TOUS LES PROTOCOLES
             </button>
             <div class="settings-secondary-actions">
               <button class="action-btn-sub cyan" id="testApiBtn">
@@ -492,12 +573,12 @@
     </nav>
   </div>
 
-  <!-- App Scripts (Cache-Busted v2.0.3) -->
-  <script src="js/audio.js?v=2.0.3"></script>
-  <script src="js/speech.js?v=2.0.3"></script>
-  <script src="js/ai-service.js?v=2.0.3"></script>
-  <script src="js/vision-scanner.js?v=2.0.3"></script>
-  <script src="js/tools-s24.js?v=2.0.3"></script>
-  <script src="js/app-s24.js?v=2.0.3"></script>
+  <!-- App Scripts (Cache-Busted v2.0.4) -->
+  <script src="js/audio.js?v=2.0.4"></script>
+  <script src="js/speech.js?v=2.0.4"></script>
+  <script src="js/ai-service.js?v=2.0.4"></script>
+  <script src="js/vision-scanner.js?v=2.0.4"></script>
+  <script src="js/tools-s24.js?v=2.0.4"></script>
+  <script src="js/app-s24.js?v=2.0.4"></script>
 </body>
 </html>

@@ -14,9 +14,29 @@ class EdithAudioEngine {
     this.voiceRate = parseFloat(localStorage.getItem('edith_voice_rate')) || 1.05;
     this.voicePitch = parseFloat(localStorage.getItem('edith_voice_pitch')) || 1.0;
     this.soundEnabled = localStorage.getItem('edith_sound_enabled') !== 'false';
+    this.autoSpeak = localStorage.getItem('edith_auto_speak') !== 'false';
 
     this.initAudioContext();
     this.initVoices();
+  }
+
+  setAudioParams(rate, pitch, soundEnabled, autoSpeak) {
+    if (rate !== undefined && !isNaN(rate)) {
+      this.voiceRate = parseFloat(rate);
+      localStorage.setItem('edith_voice_rate', this.voiceRate);
+    }
+    if (pitch !== undefined && !isNaN(pitch)) {
+      this.voicePitch = parseFloat(pitch);
+      localStorage.setItem('edith_voice_pitch', this.voicePitch);
+    }
+    if (soundEnabled !== undefined) {
+      this.soundEnabled = Boolean(soundEnabled);
+      localStorage.setItem('edith_sound_enabled', this.soundEnabled);
+    }
+    if (autoSpeak !== undefined) {
+      this.autoSpeak = Boolean(autoSpeak);
+      localStorage.setItem('edith_auto_speak', this.autoSpeak);
+    }
   }
 
   initAudioContext() {
@@ -47,6 +67,10 @@ class EdithAudioEngine {
         this.preferredVoice = this.voices.find(v => v.lang.startsWith('fr') && (v.name.includes('Female') || v.name.includes('Hortense') || v.name.includes('Google') || v.name.includes('Julie') || v.name.includes('Céline'))) ||
                               this.voices.find(v => v.lang.startsWith('fr')) ||
                               this.voices[0];
+      }
+
+      if (typeof window.onEdithVoicesLoaded === 'function') {
+        window.onEdithVoicesLoaded();
       }
     };
 

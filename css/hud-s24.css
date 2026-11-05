@@ -588,7 +588,7 @@ body, html {
   transform: scale(0.92);
 }
 
-.tactical-input, .setting-input, .setting-select {
+.tactical-input, .setting-input {
   font-size: 15px;
   font-family: var(--font-hud);
   color: var(--text-main);
@@ -597,6 +597,44 @@ body, html {
   border-radius: 4px; /* Industrial sharp edges */
   outline: none;
   user-select: text;
+}
+
+/* S24 Ultra Cybernetic Select Dropdown (100% Touch Responsive) */
+.setting-select {
+  font-size: 14px !important;
+  font-family: var(--font-hud) !important;
+  color: var(--jarvis-blue) !important;
+  background-color: rgba(2, 14, 28, 0.96) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2300f0ff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: calc(100% - 12px) center !important;
+  background-size: 16px 16px !important;
+  border: 1px solid var(--border-cyan) !important;
+  border-radius: 4px !important;
+  outline: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  padding: 0 38px 0 12px !important;
+  height: 44px !important;
+  cursor: pointer !important;
+  display: block !important;
+  width: 100% !important;
+}
+
+.setting-select:focus {
+  border-color: var(--vision-orange) !important;
+  box-shadow: 0 0 12px var(--vision-orange-dim) !important;
+}
+
+.setting-select option {
+  background-color: #020b16 !important;
+  color: #00f0ff !important;
+  padding: 10px !important;
+  font-family: var(--font-mono) !important;
+  font-size: 13.5px !important;
 }
 
 .tactical-input {
@@ -1318,9 +1356,9 @@ body, html {
   font-size: 14px;
 }
 
-.setting-select, .setting-input {
+.setting-input {
   width: 100%;
-  height: 42px;
+  height: 44px;
   padding: 0 12px;
   background: rgba(2, 11, 20, 0.85);
   border: 1px solid var(--border-cyan);
@@ -1330,8 +1368,181 @@ body, html {
   outline: none;
 }
 
-.setting-select:focus, .setting-input:focus {
+.setting-input:focus {
   border-color: var(--vision-orange);
+  box-shadow: 0 0 10px var(--vision-orange-dim);
+}
+
+.setting-textarea {
+  width: 100%;
+  background: rgba(2, 11, 20, 0.85);
+  border: 1px solid var(--border-cyan);
+  border-radius: 4px;
+  padding: 10px 12px;
+  color: var(--text-main);
+  font-family: var(--font-hud);
+  font-size: 13.5px;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 70px;
+  outline: none;
+}
+
+.setting-textarea:focus {
+  border-color: var(--vision-orange);
+  box-shadow: 0 0 10px var(--vision-orange-dim);
+}
+
+.btn-text-reset {
+  background: transparent;
+  border: none;
+  color: var(--jarvis-blue);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 2px 4px;
+}
+
+/* S24 Ultra HUD Feature Toggles */
+.hud-feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hud-feature-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: rgba(0, 240, 255, 0.04);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  border-radius: 4px;
+  gap: 10px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.hud-feature-row:hover {
+  background: rgba(0, 240, 255, 0.07);
+  border-color: rgba(0, 240, 255, 0.3);
+}
+
+.hud-feature-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.hud-feature-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-feature-desc {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+/* S24 Industrial Switch */
+.hud-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.hud-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.hud-switch-slider {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-cyan);
+  border-radius: 2px; /* Titanium sharp */
+  transition: all 0.22s ease;
+}
+
+.hud-switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #64748b;
+  border-radius: 2px;
+  transition: all 0.22s ease;
+}
+
+.hud-switch input:checked + .hud-switch-slider {
+  background-color: rgba(255, 119, 0, 0.25);
+  border-color: var(--vision-orange);
+  box-shadow: 0 0 10px var(--vision-orange-dim);
+}
+
+.hud-switch input:checked + .hud-switch-slider:before {
+  transform: translateX(22px);
+  background-color: var(--vision-orange-bright);
+  box-shadow: 0 0 8px var(--vision-orange-bright);
+}
+
+/* Audio Sliders */
+.hud-slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(0, 240, 255, 0.03);
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 240, 255, 0.12);
+  margin-top: 6px;
+}
+
+.hud-slider-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hud-slider-value {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--vision-orange-bright);
+  font-weight: 700;
+}
+
+.hud-range-slider {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  background: rgba(0, 240, 255, 0.2);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.hud-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  background: var(--vision-orange-bright);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 10px var(--vision-orange-glow);
+  cursor: pointer;
 }
 
 /* S24 Callsign Quick Chips */
