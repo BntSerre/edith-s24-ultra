@@ -1,5 +1,5 @@
-// E.D.I.T.H. Tactical AI Service Worker (Samsung Galaxy S24 Ultra Edition)
-const CACHE_NAME = 'edith-s24ultra-v1.0.0';
+// E.D.I.T.H. Tactical AI Service Worker (S24 Ultra Edition v2.0.0)
+const CACHE_NAME = 'edith-s24ultra-v2.0.0';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -19,11 +19,12 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[EDITH S24 SW] Protocoles système mis en cache...');
+      console.log('[EDITH S24 SW v2.0.0] Installation...');
       return cache.addAll(ASSETS_TO_CACHE);
-    }).then(() => self.skipWaiting())
+    })
   );
 });
 
@@ -33,7 +34,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((name) => {
           if (name !== CACHE_NAME) {
-            console.log('[EDITH S24 SW] Nettoyage ancien cache:', name);
+            console.log('[EDITH S24 SW] Purge ancien cache:', name);
             return caches.delete(name);
           }
         })
@@ -42,10 +43,10 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Network-First strategy
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Exclude direct AI API calls
   if (url.origin.includes('googleapis.com') || 
       url.origin.includes('groq.com') || 
       url.origin.includes('openai.com')) {
@@ -53,16 +54,14 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const fetchPromise = fetch(event.request).then((networkRes) => {
-        if (networkRes && networkRes.status === 200 && networkRes.type === 'basic') {
-          const toCache = networkRes.clone();
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const toCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, toCache));
         }
-        return networkRes;
-      }).catch(() => cached);
-
-      return cached || fetchPromise;
-    })
+        return networkResponse;
+      })
+      .catch(() => caches.match(event.request))
   );
 });

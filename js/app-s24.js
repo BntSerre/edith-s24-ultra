@@ -715,6 +715,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const testApiBtn = document.getElementById('testApiBtn');
+  if (testApiBtn) {
+    testApiBtn.addEventListener('click', async () => {
+      triggerHaptic('medium');
+      window.edithAI.setCredentials(
+        providerSelect.value,
+        apiKeyInput.value,
+        modelSelect.value,
+        userCallsignInput.value
+      );
+
+      testApiBtn.disabled = true;
+      testApiBtn.textContent = '⚡ TEST EN COURS...';
+      try {
+        const testRes = await window.edithAI.testConnection();
+        if (testRes.success) {
+          window.edithAudio.playSuccess();
+          alert(`✓ SUCCÈS LIAISON SATELLITE !\n\nModèle actif : ${testRes.model}\nRéponse EDITH : "${testRes.text}"`);
+        } else {
+          window.edithAudio.playWarning();
+          alert(`✕ ERREUR DE LIAISON :\n${testRes.message}`);
+        }
+      } catch (err) {
+        window.edithAudio.playWarning();
+        alert(`✕ ERREUR :\n${err.message}`);
+      } finally {
+        testApiBtn.disabled = false;
+        testApiBtn.textContent = '⚡ TESTER LIAISON IA';
+      }
+    });
+  }
+
   if (testVoiceBtn) {
     testVoiceBtn.addEventListener('click', () => {
       triggerHaptic('light');

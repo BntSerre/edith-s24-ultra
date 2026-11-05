@@ -1,16 +1,23 @@
 /**
- * E.D.I.T.H. Tactical AI Brain Service
- * Supports Google Gemini (with Auto-Discovery & Multi-Model Fallback), Groq, OpenAI, and Offline Engine.
+ * E.D.I.T.H. Tactical AI Brain Service v2.0.0
+ * Resilient Multi-Model Architecture with Auto-Discovery & Healthcheck
  */
 
 class EdithAIService {
   constructor() {
     this.provider = localStorage.getItem('edith_ai_provider') || 'gemini';
-    this.apiKey = localStorage.getItem('edith_api_key') || '';
-    this.customModel = localStorage.getItem('edith_model_name') || 'auto';
-    this.userName = localStorage.getItem('edith_user_callsign') || 'Monsieur';
+    this.apiKey = (localStorage.getItem('edith_api_key') || '').trim();
     
-    // Conversation History (context memory)
+    // Auto-migration: Purge deprecated 'gemini-1.5-flash' from localStorage
+    const storedModel = localStorage.getItem('edith_model_name');
+    if (!storedModel || storedModel === 'gemini-1.5-flash') {
+      localStorage.setItem('edith_model_name', 'auto');
+      this.customModel = 'auto';
+    } else {
+      this.customModel = storedModel;
+    }
+
+    this.userName = localStorage.getItem('edith_user_callsign') || 'Monsieur';
     this.history = [];
     this.maxHistory = 10;
   }
@@ -30,7 +37,14 @@ Ton style d'expression est :
   setCredentials(provider, apiKey, model, userName) {
     this.provider = provider || this.provider;
     this.apiKey = apiKey !== undefined ? apiKey.trim() : this.apiKey;
-    this.customModel = model || this.customModel;
+    
+    // Normalize model
+    if (!model || model === 'gemini-1.5-flash') {
+      this.customModel = 'auto';
+    } else {
+      this.customModel = model;
+    }
+
     if (userName) this.userName = userName.trim();
 
     localStorage.setItem('edith_ai_provider', this.provider);
@@ -38,8 +52,9 @@ Ton style d'expression est :
     localStorage.setItem('edith_model_name', this.customModel);
     localStorage.setItem('edith_user_callsign', this.userName);
 
-    // If API key changed, reset discovered model cache
+    // Reset cached working model on credential change to trigger fresh check
     localStorage.removeItem('edith_working_gemini_model');
+    localStorage.removeItem('edith_working_gemini_ver');
   }
 
   clearHistory() {
@@ -54,7 +69,6 @@ Ton style d'expression est :
       throw new Error("Prompt ou image requis.");
     }
 
-    // If no API key is provided and user is on an API provider, fallback to offline engine with notice
     if (!this.apiKey && this.provider !== 'offline') {
       return this.offlineFallback(promptText, imageData, true);
     }
@@ -81,7 +95,23 @@ Ton style d'expression est :
   }
 
   /**
-   * Dynamically queries Google AI Studio to discover which models are enabled for this key
+   * Test Connection diagnostic
+   */
+  async testConnection() {
+    if (!this.apiKey) {
+      return { success: false, message: "Clé API absente. Renseignez votre clé Google AI Studio." };
+    }
+    try {
+      const res = await this.callGemini("Ping test");
+      const activeModel = localStorage.getItem('edith_working_gemini_model') || this.customModel;
+      return { success: true, model: activeModel, text: res };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  /**
+   * Dynamically query Google AI Studio to discover which models are enabled for this key
    */
   async discoverAvailableGeminiModels() {
     const versions = ['v1beta', 'v1'];
@@ -98,8 +128,8 @@ Ton style d'expression est :
                 name: m.name.replace(/^models\//, ''),
                 version: ver
               }));
-            
-            // Prioritize flash models
+
+            // Sort flash models first
             generateModels.sort((a, b) => {
               const aFlash = a.name.includes('flash');
               const bFlash = b.name.includes('flash');
@@ -119,7 +149,7 @@ Ton style d'expression est :
   }
 
   /**
-   * Single Gemini API request runner
+   * Single Gemini API call
    */
   async _sendGeminiRequest(model, version, contents) {
     const endpoint = `https://generativelanguage.googleapis.com/${version}/models/${model}:generateContent?key=${this.apiKey}`;
@@ -156,7 +186,7 @@ Ton style d'expression est :
   }
 
   /**
-   * Google Gemini API with Automatic Model Discovery & Resilient Fallback Cascade
+   * Resilient Gemini Query Execution with Priority Cascade
    */
   async callGemini(promptText, imageData = null) {
     const contents = [];
@@ -169,7 +199,6 @@ Ton style d'expression est :
       });
     }
 
-    // Current message
     const currentParts = [];
     if (promptText) {
       currentParts.push({ text: promptText });
@@ -189,29 +218,27 @@ Ton style d'expression est :
       parts: currentParts
     });
 
-    // Build candidate models list
     let candidateModels = [];
 
-    // 1. Cached working model
+    // 1. Cached working model if verified recently
     const cachedModel = localStorage.getItem('edith_working_gemini_model');
     const cachedVer = localStorage.getItem('edith_working_gemini_ver') || 'v1beta';
-    if (cachedModel) {
+    if (cachedModel && cachedModel !== 'gemini-1.5-flash') {
       candidateModels.push({ name: cachedModel, version: cachedVer });
     }
 
-    // 2. Custom model if user chose one
-    if (this.customModel && this.customModel !== 'auto' && this.customModel !== cachedModel) {
+    // 2. Custom model chosen by user (if not 'auto' and not deprecated)
+    if (this.customModel && this.customModel !== 'auto' && this.customModel !== 'gemini-1.5-flash') {
       candidateModels.push({ name: this.customModel, version: 'v1beta' });
       candidateModels.push({ name: this.customModel, version: 'v1' });
     }
 
-    // 3. Current active standards for Google AI Studio
+    // 3. Current active Google AI Studio standards
     candidateModels.push(
       { name: 'gemini-2.0-flash', version: 'v1beta' },
       { name: 'gemini-1.5-flash-latest', version: 'v1beta' },
       { name: 'gemini-1.5-flash-002', version: 'v1beta' },
       { name: 'gemini-1.5-flash', version: 'v1' },
-      { name: 'gemini-1.5-flash', version: 'v1beta' },
       { name: 'gemini-2.5-flash', version: 'v1beta' },
       { name: 'gemini-2.0-flash-exp', version: 'v1beta' },
       { name: 'gemini-1.5-flash-8b', version: 'v1beta' },
@@ -244,9 +271,9 @@ Ton style d'expression est :
         }
       } catch (err) {
         lastError = err;
-        console.warn(`[EDITH] Modèle ${candidate.version}/${candidate.name} indisponible :`, err.message);
+        console.warn(`[EDITH] Candidat ${candidate.version}/${candidate.name} indisponible :`, err.message);
 
-        // Stop cascade if the API key itself is completely invalid
+        // Immediate stop if API key itself is rejected
         if (err.message.includes('API_KEY_INVALID') || err.message.includes('API key not valid')) {
           throw new Error("Clé API Google non valide. Vérifiez votre clé sur Google AI Studio.");
         }
@@ -255,7 +282,7 @@ Ton style d'expression est :
 
     // If pre-set candidates failed, dynamically discover models from user's account
     try {
-      console.log('[EDITH] Découverte dynamique des modèles sur le compte Google AI Studio...');
+      console.log('[EDITH] Découverte dynamique des modèles sur votre compte Google AI Studio...');
       const discovered = await this.discoverAvailableGeminiModels();
       if (discovered.length > 0) {
         for (const candidate of discovered) {
@@ -322,7 +349,6 @@ Ton style d'expression est :
 
     const data = await response.json();
     const reply = data.choices?.[0]?.message?.content;
-
     if (!reply) throw new Error("Réponse Groq indéfinie.");
 
     this.history.push({ role: 'user', text: promptText });
@@ -381,7 +407,6 @@ Ton style d'expression est :
 
     const data = await response.json();
     const reply = data.choices?.[0]?.message?.content;
-
     if (!reply) throw new Error("Réponse OpenAI indéfinie.");
 
     this.history.push({ role: 'user', text: promptText || "Image transmise." });
