@@ -1,5 +1,5 @@
-// E.D.I.T.H. Tactical AI Service Worker (S24 Ultra Edition v2.0.4)
-const CACHE_NAME = 'edith-s24ultra-v2.0.4';
+// E.D.I.T.H. Tactical AI Service Worker (S24 Ultra Edition v2.0.5)
+const CACHE_NAME = 'edith-s24ultra-v2.0.5';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
