@@ -51,7 +51,6 @@
   margin: 0;
   padding: 0;
   -webkit-tap-highlight-color: transparent;
-  user-select: none;
 }
 
 body, html {
@@ -62,9 +61,19 @@ body, html {
   color: var(--text-main);
   font-family: var(--font-hud);
   overflow: hidden;
-  position: fixed;
-  overscroll-behavior: none;
+}
+
+/* Guarantee all inputs, textareas & selects can be selected, focused & typed into */
+input, textarea, select {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  pointer-events: auto !important;
+  touch-action: auto !important;
+}
+
+button {
   touch-action: manipulation;
+  cursor: pointer;
 }
 
 /* Futuristic Scanline Effect */
@@ -615,8 +624,10 @@ body, html {
   -webkit-appearance: none !important;
   -moz-appearance: none !important;
   appearance: none !important;
-  user-select: none !important;
-  -webkit-user-select: none !important;
+  user-select: auto !important;
+  -webkit-user-select: auto !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
   padding: 0 38px 0 12px !important;
   height: 44px !important;
   cursor: pointer !important;
@@ -821,13 +832,31 @@ body, html {
 /* ==========================================================================
    TAB 3: PROTOCOLES & STARK TOOLS — REDESIGNED & ULTRA CLEAN
    ========================================================================== */
+#tabTools.hud-tab-pane {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+  overscroll-behavior-y: auto !important;
+}
+
+#tabTools.hud-tab-pane.active {
+  display: block !important;
+}
+
 .tools-view-pane {
-  flex: 1;
-  overflow-y: auto;
-  padding: 14px;
+  width: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+  padding: 16px 14px 130px 14px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  touch-action: pan-y !important;
 }
 
 /* Section Header Bar */
@@ -1158,19 +1187,33 @@ body, html {
 }
 
 /* ==========================================================================
-   TAB 4: CONFIGURATION & SETTINGS (Galaxy S24 Ultra Edition)
+   TAB 4: CONFIGURATION & SETTINGS (Galaxy S24 Ultra Edition — Spacious & Touch Responsive)
    ========================================================================== */
+#tabSettings.hud-tab-pane {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+  overscroll-behavior-y: auto !important;
+}
+
+#tabSettings.hud-tab-pane.active {
+  display: block !important;
+}
+
 .settings-view-pane {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 12px 14px calc(90px + max(var(--safe-bottom), 12px)) 14px;
+  width: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+  padding: 16px 14px 140px 14px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: contain;
-  scroll-padding-bottom: 90px;
+  gap: 16px;
+  touch-action: pan-y !important;
 }
 
 /* S24 Ultra HUD Header */
@@ -1178,34 +1221,35 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
-  background: rgba(0, 240, 255, 0.05);
-  border: 1px solid rgba(0, 240, 255, 0.2);
-  border-radius: 4px;
+  padding: 12px 14px;
+  background: rgba(0, 240, 255, 0.06);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 6px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
 }
 
 .settings-hud-title {
   font-family: var(--font-hud);
-  font-size: 10.5px;
-  font-weight: 700;
+  font-size: 11.5px;
+  font-weight: 800;
   letter-spacing: 1.5px;
   color: var(--jarvis-blue);
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
 }
 
 .settings-status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: 10px;
   color: var(--jarvis-blue);
-  background: rgba(0, 240, 255, 0.1);
-  padding: 2px 7px;
-  border-radius: 2px;
-  border: 1px solid rgba(0, 240, 255, 0.3);
+  background: rgba(0, 240, 255, 0.12);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 240, 255, 0.4);
 }
 
 .status-pulse-dot {
@@ -1217,245 +1261,360 @@ body, html {
   animation: pulse-cyan 1.6s infinite alternate;
 }
 
-/* Compact PWA Banner for S24 Ultra */
+/* Compact PWA Banner */
 .pwa-compact-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  padding: 12px 14px;
   background: rgba(255, 119, 0, 0.08);
-  border: 1px solid var(--border-orange);
-  border-radius: 4px;
-  padding: 10px 12px;
+  border: 1px solid rgba(255, 119, 0, 0.35);
+  border-radius: 6px;
+  gap: 10px;
 }
 
 .pwa-bar-info {
   flex: 1;
-  min-width: 0;
 }
 
 .pwa-bar-title {
-  font-family: var(--font-hud);
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 800;
   color: var(--vision-orange-bright);
   letter-spacing: 1px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .pwa-bar-sub {
   font-size: 10px;
   color: var(--text-muted);
+  font-family: var(--font-mono);
   margin-top: 2px;
-  line-height: 1.3;
 }
 
 .pwa-install-mini-btn {
-  height: 34px;
-  padding: 0 12px;
-  background: linear-gradient(135deg, var(--vision-orange) 0%, #e65100 100%);
+  background: var(--vision-orange);
   border: 1px solid #ffffff;
-  border-radius: 3px;
   color: #ffffff;
   font-family: var(--font-hud);
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 1px;
+  padding: 7px 14px;
+  border-radius: 4px;
   cursor: pointer;
   white-space: nowrap;
-  box-shadow: 0 0 10px var(--vision-orange-dim);
-  flex-shrink: 0;
+  touch-action: manipulation;
+  transition: transform 0.12s ease;
 }
 
 .pwa-install-mini-btn:active {
-  transform: scale(0.96);
+  transform: scale(0.95);
 }
 
-.tool-card-badge {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  color: var(--jarvis-blue);
-  background: rgba(0, 240, 255, 0.12);
-  border: 1px solid rgba(0, 240, 255, 0.3);
-  padding: 2px 6px;
-  border-radius: 2px;
-  letter-spacing: 0.5px;
-}
-
-.tool-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-cyan);
-  border-radius: 4px;
-  padding: 12px;
-  position: relative;
-  overflow: hidden;
-}
-
-.tool-card-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: var(--jarvis-blue);
-  margin-bottom: 10px;
-}
-
-.setting-group {
+/* S24 Ultra Cybernetic Settings Cards */
+.settings-card {
+  background: linear-gradient(180deg, rgba(2, 16, 30, 0.95) 0%, rgba(1, 10, 20, 0.98) 100%);
+  border: 1px solid rgba(0, 240, 255, 0.28);
+  border-left: 4px solid var(--jarvis-blue);
+  border-radius: 6px;
+  padding: 18px 16px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65);
+  position: relative;
 }
 
-.setting-label-row {
+.settings-card.orange-tint {
+  border-left-color: var(--vision-orange);
+  border-color: rgba(255, 119, 0, 0.3);
+}
+
+.settings-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.setting-label {
-  font-size: 10.5px;
-  font-family: var(--font-mono);
-  letter-spacing: 1px;
-  color: var(--jarvis-blue);
-  text-transform: uppercase;
-}
-
-.setting-hint-badge {
-  font-size: 9.5px;
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-}
-
-.api-key-wrapper {
-  position: relative;
+.settings-card-title {
   display: flex;
   align-items: center;
-  width: 100%;
-}
-
-.api-key-wrapper .setting-input {
-  padding-right: 42px;
-}
-
-.api-toggle-btn {
-  position: absolute;
-  right: 6px;
-  width: 32px;
-  height: 32px;
-  background: transparent;
-  border: none;
-  color: var(--jarvis-blue);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-}
-
-.setting-input {
-  width: 100%;
-  height: 44px;
-  padding: 0 12px;
-  background: rgba(2, 11, 20, 0.85);
-  border: 1px solid var(--border-cyan);
-  border-radius: 4px;
-  color: var(--text-main);
-  font-size: 14px;
-  outline: none;
-}
-
-.setting-input:focus {
-  border-color: var(--vision-orange);
-  box-shadow: 0 0 10px var(--vision-orange-dim);
-}
-
-.setting-textarea {
-  width: 100%;
-  background: rgba(2, 11, 20, 0.85);
-  border: 1px solid var(--border-cyan);
-  border-radius: 4px;
-  padding: 10px 12px;
-  color: var(--text-main);
+  gap: 8px;
   font-family: var(--font-hud);
-  font-size: 13.5px;
-  line-height: 1.5;
-  resize: vertical;
-  min-height: 70px;
-  outline: none;
-}
-
-.setting-textarea:focus {
-  border-color: var(--vision-orange);
-  box-shadow: 0 0 10px var(--vision-orange-dim);
-}
-
-.btn-text-reset {
-  background: transparent;
-  border: none;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
   color: var(--jarvis-blue);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  cursor: pointer;
-  text-decoration: underline;
-  padding: 2px 4px;
 }
 
-/* S24 Ultra HUD Feature Toggles */
-.hud-feature-list {
+.settings-card-title.orange {
+  color: var(--vision-orange-bright);
+}
+
+.settings-card-icon {
+  font-size: 15px;
+}
+
+.settings-card-badge {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: var(--jarvis-blue);
+  background: rgba(0, 240, 255, 0.12);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+}
+
+.settings-card-badge.orange {
+  color: var(--vision-orange-bright);
+  background: rgba(255, 119, 0, 0.12);
+  border-color: rgba(255, 119, 0, 0.4);
+}
+
+/* Fields & Labels */
+.settings-field {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.hud-feature-row {
+.settings-label-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 12px;
-  background: rgba(0, 240, 255, 0.04);
-  border: 1px solid rgba(0, 240, 255, 0.15);
+  gap: 8px;
+}
+
+.settings-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+}
+
+.settings-sub-badge {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--jarvis-blue);
+  background: rgba(0, 240, 255, 0.08);
+  padding: 2px 7px;
   border-radius: 4px;
+  border: 1px solid rgba(0, 240, 255, 0.25);
+}
+
+.settings-field-hint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.settings-field-hint a {
+  color: var(--vision-orange-bright);
+  text-decoration: underline;
+}
+
+/* S24 Ultra Cybernetic Inputs & Dropdowns (100% Touch Responsive) */
+.settings-input {
+  width: 100%;
+  height: 48px;
+  background: rgba(2, 14, 28, 0.96) !important;
+  border: 1.5px solid rgba(0, 240, 255, 0.4) !important;
+  border-radius: 4px !important;
+  padding: 0 14px !important;
+  color: #ffffff !important;
+  font-family: var(--font-hud) !important;
+  font-size: 16px !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  pointer-events: auto !important;
+  touch-action: auto !important;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.settings-input:focus {
+  border-color: var(--vision-orange) !important;
+  box-shadow: 0 0 14px var(--vision-orange-dim) !important;
+  background: rgba(3, 20, 38, 0.98) !important;
+}
+
+.settings-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.settings-select {
+  width: 100% !important;
+  height: 48px !important;
+  background: rgba(2, 14, 28, 0.96) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2300f0ff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat calc(100% - 14px) center / 16px !important;
+  border: 1.5px solid rgba(0, 240, 255, 0.4) !important;
+  border-radius: 4px !important;
+  padding: 0 38px 0 14px !important;
+  color: var(--jarvis-blue) !important;
+  font-family: var(--font-hud) !important;
+  font-size: 14.5px !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  cursor: pointer !important;
+  user-select: auto !important;
+  -webkit-user-select: auto !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+
+.settings-select:focus {
+  border-color: var(--vision-orange) !important;
+  box-shadow: 0 0 14px var(--vision-orange-dim) !important;
+}
+
+.settings-select option {
+  background-color: #020c18 !important;
+  color: #00f0ff !important;
+  padding: 12px !important;
+  font-family: var(--font-mono) !important;
+  font-size: 14px !important;
+}
+
+/* API Key Row with Action Buttons */
+.api-key-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.api-key-input-row .settings-input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono) !important;
+  letter-spacing: 0.5px;
+}
+
+.api-btn-action {
+  height: 48px;
+  padding: 0 14px;
+  background: rgba(0, 240, 255, 0.12);
+  border: 1.5px solid rgba(0, 240, 255, 0.45);
+  border-radius: 4px;
+  color: var(--jarvis-blue);
+  font-family: var(--font-hud);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  touch-action: manipulation;
+  transition: all 0.15s ease;
+}
+
+.api-btn-action:active {
+  background: var(--jarvis-blue);
+  color: #000;
+  transform: scale(0.96);
+}
+
+.api-btn-action.paste-btn {
+  background: rgba(255, 119, 0, 0.15);
+  border-color: rgba(255, 119, 0, 0.5);
+  color: var(--vision-orange-bright);
+}
+
+.api-btn-action.paste-btn:active {
+  background: var(--vision-orange);
+  color: #ffffff;
+}
+
+/* Callsign Pills Row */
+.callsign-pills-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.callsign-pill {
+  flex: 1;
+  min-width: calc(33.333% - 6px);
+  height: 40px;
+  background: rgba(255, 119, 0, 0.08);
+  border: 1px solid rgba(255, 119, 0, 0.4);
+  border-radius: 4px;
+  color: var(--vision-orange-bright);
+  font-family: var(--font-hud);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.callsign-pill:active {
+  background: var(--vision-orange);
+  color: #ffffff;
+  transform: scale(0.95);
+}
+
+/* Feature Toggle Cards */
+.settings-toggle-list {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
-  transition: border-color 0.15s ease, background 0.15s ease;
 }
 
-.hud-feature-row:hover {
-  background: rgba(0, 240, 255, 0.07);
-  border-color: rgba(0, 240, 255, 0.3);
+.settings-toggle-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(0, 240, 255, 0.04);
+  border: 1px solid rgba(0, 240, 255, 0.18);
+  border-radius: 4px;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.hud-feature-info {
+.settings-toggle-info {
   flex: 1;
   min-width: 0;
 }
 
-.hud-feature-title {
-  font-size: 12px;
+.settings-toggle-title {
+  font-size: 13px;
   font-weight: 700;
   color: var(--text-main);
   letter-spacing: 0.5px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
-.hud-feature-desc {
-  font-size: 10px;
+.settings-toggle-desc {
+  font-size: 10.5px;
   color: var(--text-muted);
-  margin-top: 2px;
-  line-height: 1.3;
+  margin-top: 3px;
+  line-height: 1.35;
 }
 
-/* S24 Industrial Switch */
+/* Modern HUD Toggle Switch */
 .hud-switch {
   position: relative;
   display: inline-block;
-  width: 48px;
-  height: 26px;
+  width: 52px;
+  height: 30px;
   flex-shrink: 0;
   cursor: pointer;
 }
@@ -1469,26 +1628,26 @@ body, html {
 .hud-switch-slider {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(255, 255, 255, 0.08);
-  border: 1px solid var(--border-cyan);
-  border-radius: 2px; /* Titanium sharp */
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid rgba(0, 240, 255, 0.4);
+  border-radius: 15px;
   transition: all 0.22s ease;
 }
 
 .hud-switch-slider:before {
   position: absolute;
   content: "";
-  height: 18px;
-  width: 18px;
+  height: 22px;
+  width: 22px;
   left: 3px;
-  bottom: 3px;
-  background-color: #64748b;
-  border-radius: 2px;
+  bottom: 2.5px;
+  background-color: #718096;
+  border-radius: 50%;
   transition: all 0.22s ease;
 }
 
 .hud-switch input:checked + .hud-switch-slider {
-  background-color: rgba(255, 119, 0, 0.25);
+  background-color: rgba(255, 119, 0, 0.28);
   border-color: var(--vision-orange);
   box-shadow: 0 0 10px var(--vision-orange-dim);
 }
@@ -1496,165 +1655,195 @@ body, html {
 .hud-switch input:checked + .hud-switch-slider:before {
   transform: translateX(22px);
   background-color: var(--vision-orange-bright);
-  box-shadow: 0 0 8px var(--vision-orange-bright);
+  box-shadow: 0 0 10px var(--vision-orange-bright);
 }
 
-/* Audio Sliders */
-.hud-slider-group {
+/* Voice Picker Row */
+.voice-picker-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.voice-select-wrapper {
+  flex: 1;
+}
+
+.action-btn-voice-test {
+  height: 48px;
+  padding: 0 16px;
+  background: rgba(0, 240, 255, 0.15);
+  border: 1.5px solid var(--border-cyan);
+  border-radius: 4px;
+  color: var(--jarvis-blue);
+  font-family: var(--font-hud);
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  touch-action: manipulation;
+  transition: all 0.15s ease;
+}
+
+.action-btn-voice-test:active {
+  background: var(--jarvis-blue);
+  color: #000;
+  transform: scale(0.96);
+}
+
+/* Sliders Card */
+.settings-slider-card {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   background: rgba(0, 240, 255, 0.03);
-  padding: 8px 12px;
+  padding: 12px 14px;
   border-radius: 4px;
-  border: 1px solid rgba(0, 240, 255, 0.12);
-  margin-top: 6px;
+  border: 1px solid rgba(0, 240, 255, 0.18);
 }
 
-.hud-slider-header {
+.settings-slider-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.hud-slider-value {
+.settings-slider-value {
   font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--vision-orange-bright);
+  font-size: 12px;
   font-weight: 700;
+  color: var(--vision-orange-bright);
 }
 
 .hud-range-slider {
   width: 100%;
-  height: 6px;
+  height: 8px;
   -webkit-appearance: none;
   background: rgba(0, 240, 255, 0.2);
-  border-radius: 2px;
+  border-radius: 4px;
   outline: none;
   cursor: pointer;
 }
 
 .hud-range-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 2px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
   background: var(--vision-orange-bright);
   border: 2px solid #ffffff;
-  box-shadow: 0 0 10px var(--vision-orange-glow);
+  box-shadow: 0 0 12px var(--vision-orange-glow);
   cursor: pointer;
 }
 
-/* S24 Callsign Quick Chips */
-.callsign-chips-row {
-  display: flex;
-  gap: 6px;
-  margin-top: 6px;
-  flex-wrap: wrap;
+/* Textarea */
+.settings-textarea {
+  width: 100%;
+  background: rgba(2, 14, 28, 0.96);
+  border: 1.5px solid rgba(0, 240, 255, 0.4);
+  border-radius: 4px;
+  padding: 12px 14px;
+  color: var(--text-main);
+  font-family: var(--font-hud);
+  font-size: 15px;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 85px;
+  box-sizing: border-box;
+  outline: none;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  touch-action: auto !important;
+  pointer-events: auto !important;
 }
 
-.callsign-chip {
-  background: rgba(0, 240, 255, 0.08);
-  border: 1px solid rgba(0, 240, 255, 0.25);
-  color: var(--jarvis-blue);
-  border-radius: 3px;
-  padding: 4px 10px;
-  font-size: 11px;
-  font-family: var(--font-mono);
-  cursor: pointer;
-  transition: all 0.15s ease;
+.settings-textarea:focus {
+  border-color: var(--vision-orange);
+  box-shadow: 0 0 12px var(--vision-orange-dim);
 }
 
-.callsign-chip:active {
-  background: var(--jarvis-blue);
-  color: #000;
-  font-weight: 700;
-}
-
-/* Voice Inline Row */
-.voice-row-wrapper {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-/* S24 Actions Hub */
-.settings-actions-box {
+/* Action Center */
+.settings-actions-card {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   margin-top: 4px;
 }
 
-.action-btn-main {
+.settings-save-button {
   width: 100%;
-  height: 48px;
-  background: linear-gradient(135deg, var(--vision-orange) 0%, #d84315 100%);
-  border: 1px solid #ffffff;
+  height: 54px;
+  background: linear-gradient(135deg, #ff7700 0%, #e65100 100%);
+  border: 1.5px solid #ffffff;
   border-radius: 4px;
   color: #ffffff;
   font-family: var(--font-hud);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
   letter-spacing: 1.5px;
   cursor: pointer;
+  touch-action: manipulation;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  box-shadow: 0 0 16px var(--vision-orange-glow);
-  transition: transform 0.12s ease;
+  gap: 10px;
+  box-shadow: 0 4px 20px rgba(255, 119, 0, 0.45);
+  transition: transform 0.12s ease, filter 0.15s ease;
 }
 
-.action-btn-main:active {
-  transform: scale(0.98);
+.settings-save-button:active {
+  transform: scale(0.97);
+  filter: brightness(1.15);
 }
 
-.settings-secondary-actions {
+.settings-sub-actions-row {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
-.action-btn-sub {
+.settings-sub-btn {
   flex: 1;
-  height: 42px;
+  height: 46px;
   border-radius: 4px;
   font-family: var(--font-hud);
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 1px;
   cursor: pointer;
+  touch-action: manipulation;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: rgba(2, 11, 20, 0.85);
+  background: rgba(2, 14, 28, 0.9);
   transition: all 0.15s ease;
 }
 
-.action-btn-sub.cyan {
-  border: 1px solid var(--border-cyan);
+.settings-sub-btn.cyan {
+  border: 1.5px solid var(--border-cyan);
   color: var(--jarvis-blue);
 }
 
-.action-btn-sub.cyan:active {
+.settings-sub-btn.cyan:active {
   background: var(--jarvis-blue);
-  color: #000;
+  color: #000000;
 }
 
-.action-btn-sub.danger {
-  border: 1px solid rgba(255, 59, 48, 0.4);
+.settings-sub-btn.danger {
+  border: 1.5px solid rgba(255, 59, 48, 0.45);
   color: var(--danger-red);
 }
 
-.action-btn-sub.danger:active {
+.settings-sub-btn.danger:active {
   background: var(--danger-red);
   color: #ffffff;
 }
 
 .settings-bottom-spacer {
-  height: 60px;
+  height: 140px;
   flex-shrink: 0;
+  width: 100%;
 }
 
 .action-btn-row {
@@ -1675,7 +1864,8 @@ body, html {
   letter-spacing: 1px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.15s ease;
+  touch-action: manipulation;
+  transition: transform 0.12s ease, background 0.12s ease;
 }
 
 .action-btn.orange {
@@ -1694,6 +1884,7 @@ body, html {
   background: var(--vision-orange);
   color: #000;
 }
+
 
 /* ==========================================================================
    BOTTOM HUD NAVIGATION BAR

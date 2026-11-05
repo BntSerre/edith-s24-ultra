@@ -18,7 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
   <!-- S24 Ultra HUD CSS -->
-  <link rel="stylesheet" href="css/hud-s24.css?v=2.0.5">
+  <link rel="stylesheet" href="css/hud-s24.css?v=2.0.6">
 </head>
 <body>
   <!-- HUD Background Overlays -->
@@ -341,7 +341,7 @@
           <!-- S24 Ultra Tactical HUD Header -->
           <div class="settings-hud-header">
             <div class="settings-hud-title">
-              <span class="hud-bracket">[</span> S24U // PROTOCOLES & CONFIGURATION <span class="hud-bracket">]</span>
+              <span class="hud-bracket">[</span> S24U // PROTOCOLES &amp; CONFIGURATION <span class="hud-bracket">]</span>
             </div>
             <div class="settings-status-badge">
               <span class="status-pulse-dot"></span>
@@ -353,68 +353,91 @@
           <div class="pwa-compact-bar" id="installBannerCard">
             <div class="pwa-bar-info">
               <div class="pwa-bar-title">📱 APPLICATION NATIVE S24 ULTRA</div>
-              <div class="pwa-bar-sub">Mode plein écran One UI, lanceur d'apps & accès hors-ligne</div>
+              <div class="pwa-bar-sub">Mode plein écran One UI, lanceur d'apps &amp; accès hors-ligne</div>
             </div>
-            <button class="pwa-install-mini-btn" id="installAppBtn">📲 INSTALLER</button>
+            <button class="pwa-install-mini-btn" id="installAppBtn" type="button">📲 INSTALLER</button>
           </div>
 
           <!-- 1. AI Engine & Satellite Link -->
-          <div class="tool-card">
-            <div class="tool-card-title">
-              <span>🧠 NOYAU D'INTELLIGENCE ARTIFICIELLE</span>
-              <span class="tool-card-badge" id="aiLinkBadge">SATELLITE</span>
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-title">
+                <span class="settings-card-icon">🧠</span>
+                <span>NOYAU D'INTELLIGENCE ARTIFICIELLE</span>
+              </div>
+              <span class="settings-card-badge" id="aiLinkBadge">SATELLITE ACTIF</span>
             </div>
             
-            <div class="setting-group">
-              <label class="setting-label">Fournisseur d'IA</label>
-              <select id="providerSelect" class="setting-select">
-                <option value="gemini">Google Gemini (Vision AR & Illimité - Recommandé)</option>
-                <option value="groq">Groq Cloud (Llama 3.3 - Vitesse Éclair)</option>
-                <option value="openai">OpenAI (GPT-4o-mini)</option>
-                <option value="offline">Mode Autonome E.D.I.T.H. (Hors Ligne / Sans Clé)</option>
-              </select>
-            </div>
-
-            <div class="setting-group" style="margin-top:10px;">
-              <div class="setting-label-row">
-                <label class="setting-label">Clé d'API Privée</label>
-                <span class="setting-hint-badge" id="apiKeyHint">100% Locale & Chiffrée</span>
-              </div>
-              <div class="api-key-wrapper">
-                <input type="password" id="apiKeyInput" class="setting-input" placeholder="Collez votre clé Google AI Studio (AIzaSy...)">
-                <button type="button" class="api-toggle-btn" id="toggleApiKeyVisibility" aria-label="Afficher ou masquer la clé">👁️</button>
+            <div class="settings-field">
+              <label class="settings-label" for="providerSelect">FOURNISSEUR D'IA</label>
+              <div class="settings-select-wrapper">
+                <select id="providerSelect" class="settings-select">
+                  <option value="gemini">Google Gemini (Vision AR &amp; Illimité - Recommandé)</option>
+                  <option value="groq">Groq Cloud (Llama 3.3 - Vitesse Éclair)</option>
+                  <option value="openai">OpenAI (GPT-4o-mini)</option>
+                  <option value="offline">Mode Autonome E.D.I.T.H. (Hors Ligne / Sans Clé)</option>
+                </select>
               </div>
             </div>
 
-            <div class="setting-group" style="margin-top:10px;">
-              <label class="setting-label">Modèle IA Actif</label>
-              <select id="modelSelect" class="setting-select">
-                <option value="auto">⚡ Auto-Détection Intelligente (Recommandé)</option>
-                <option value="gemini-2.0-flash">gemini-2.0-flash (Recommandé Google AI Studio)</option>
-                <option value="gemini-1.5-flash-latest">gemini-1.5-flash-latest</option>
-                <option value="gemini-1.5-flash-002">gemini-1.5-flash-002</option>
-                <option value="gemini-1.5-flash">gemini-1.5-flash</option>
-                <option value="gemini-2.5-flash">gemini-2.5-flash</option>
-                <option value="gemini-1.5-pro">gemini-1.5-pro</option>
-                <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (Groq)</option>
-                <option value="gpt-4o-mini">gpt-4o-mini (OpenAI)</option>
-              </select>
+            <div class="settings-field">
+              <div class="settings-label-row">
+                <label class="settings-label" for="apiKeyInput">CLÉ D'API PRIVÉE</label>
+                <span class="settings-sub-badge" id="apiKeyHint">100% Locale &amp; Chiffrée</span>
+              </div>
+              <div class="api-key-input-row">
+                <input 
+                  type="password" 
+                  id="apiKeyInput" 
+                  class="settings-input" 
+                  placeholder="Collez votre clé Google AI Studio (AIzaSy...)" 
+                  autocomplete="off" 
+                  autocorrect="off" 
+                  autocapitalize="off" 
+                  spellcheck="false"
+                >
+                <button type="button" class="api-btn-action" id="toggleApiKeyVisibility" aria-label="Afficher ou masquer la clé">👁️</button>
+                <button type="button" class="api-btn-action paste-btn" id="pasteApiKeyBtn" aria-label="Coller depuis le presse-papier">📋 Coller</button>
+              </div>
+              <div class="settings-field-hint">
+                Pour Google Gemini, générez gratuitement votre clé sur <a href="https://aistudio.google.com" target="_blank" rel="noopener">aistudio.google.com</a>.
+              </div>
+            </div>
+
+            <div class="settings-field">
+              <label class="settings-label" for="modelSelect">MODÈLE IA ACTIF</label>
+              <div class="settings-select-wrapper">
+                <select id="modelSelect" class="settings-select">
+                  <option value="auto">⚡ Auto-Détection Intelligente (Recommandé)</option>
+                  <option value="gemini-2.0-flash">gemini-2.0-flash (Recommandé Google AI Studio)</option>
+                  <option value="gemini-1.5-flash-latest">gemini-1.5-flash-latest</option>
+                  <option value="gemini-1.5-flash-002">gemini-1.5-flash-002</option>
+                  <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+                  <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                  <option value="gemini-1.5-pro">gemini-1.5-pro</option>
+                  <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (Groq)</option>
+                  <option value="gpt-4o-mini">gpt-4o-mini (OpenAI)</option>
+                </select>
+              </div>
             </div>
           </div>
 
           <!-- 2. Interactive Stark Functions & Protocols (ON/OFF Toggles) -->
-          <div class="tool-card">
-            <div class="tool-card-title">
-              <span>⚡ FONCTIONS & PROTOCOLES ACTIFS D'E.D.I.T.H.</span>
-              <span class="tool-card-badge" style="color:var(--vision-orange-bright);border-color:var(--border-orange);">MODIFIABLE</span>
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-title">
+                <span class="settings-card-icon">⚡</span>
+                <span>FONCTIONS &amp; PROTOCOLES ACTIFS D'E.D.I.T.H.</span>
+              </div>
+              <span class="settings-card-badge orange">MODIFIABLE</span>
             </div>
             
-            <div class="hud-feature-list">
+            <div class="settings-toggle-list">
               <!-- Feature 1: Auto Speak -->
-              <div class="hud-feature-row">
-                <div class="hud-feature-info">
-                  <div class="hud-feature-title">🗣️ Réponse vocale automatique</div>
-                  <div class="hud-feature-desc">EDITH lit à haute voix chaque réponse textuelle</div>
+              <div class="settings-toggle-card">
+                <div class="settings-toggle-info">
+                  <div class="settings-toggle-title">🗣️ Réponse vocale automatique</div>
+                  <div class="settings-toggle-desc">E.D.I.T.H. lit à haute voix chaque réponse textuelle dès sa réception</div>
                 </div>
                 <label class="hud-switch">
                   <input type="checkbox" id="featureAutoSpeak" checked>
@@ -423,10 +446,10 @@
               </div>
 
               <!-- Feature 2: Stark Sound FX -->
-              <div class="hud-feature-row">
-                <div class="hud-feature-info">
-                  <div class="hud-feature-title">🔊 Effets sonores Stark HUD</div>
-                  <div class="hud-feature-desc">Bruitages futuristes lors des clics, analyses et alertes</div>
+              <div class="settings-toggle-card">
+                <div class="settings-toggle-info">
+                  <div class="settings-toggle-title">🔊 Effets sonores Stark HUD</div>
+                  <div class="settings-toggle-desc">Bruitages futuristes lors des clics, analyses visuelles et alertes</div>
                 </div>
                 <label class="hud-switch">
                   <input type="checkbox" id="featureSoundFx" checked>
@@ -435,10 +458,10 @@
               </div>
 
               <!-- Feature 3: Tactical Pacing -->
-              <div class="hud-feature-row">
-                <div class="hud-feature-info">
-                  <div class="hud-feature-title">🎯 Mode Haute Réactivité (Style Combat)</div>
-                  <div class="hud-feature-desc">Réponses incisives, tactiques et ultra-concises</div>
+              <div class="settings-toggle-card">
+                <div class="settings-toggle-info">
+                  <div class="settings-toggle-title">🎯 Mode Réactivité Maximale (Combat)</div>
+                  <div class="settings-toggle-desc">Réponses incisives, directes, sans formules de politesse superflues</div>
                 </div>
                 <label class="hud-switch">
                   <input type="checkbox" id="featureTacticalPacing">
@@ -449,81 +472,102 @@
           </div>
 
           <!-- 3. Voice Synthesizer & Acoustic Sliders -->
-          <div class="tool-card">
-            <div class="tool-card-title">
-              <span>🗣️ SYNTHÈSE VOCALE & RÉGLAGES ACOUSTIQUES</span>
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-title">
+                <span class="settings-card-icon">🎙️</span>
+                <span>SYNTHÈSE VOCALE &amp; RÉGLAGES ACOUSTIQUES</span>
+              </div>
             </div>
             
-            <div class="setting-group">
-              <label class="setting-label">Sélection du timbre vocal</label>
-              <div class="voice-row-wrapper">
-                <select id="voiceSelect" class="setting-select" style="flex:1;"></select>
-                <button class="action-btn" id="testVoiceBtn" style="width:auto;padding:0 14px;white-space:nowrap;flex-shrink:0;">🔊 Tester</button>
+            <div class="settings-field">
+              <label class="settings-label" for="voiceSelect">SÉLECTION DU TIMBRE VOCAL</label>
+              <div class="voice-picker-row">
+                <div class="settings-select-wrapper voice-select-wrapper">
+                  <select id="voiceSelect" class="settings-select"></select>
+                </div>
+                <button type="button" class="action-btn-voice-test" id="testVoiceBtn">🔊 Tester</button>
               </div>
             </div>
 
             <!-- Speech Rate Slider -->
-            <div class="hud-slider-group">
-              <div class="hud-slider-header">
-                <span class="setting-label">⚡ Vitesse d'élocution</span>
-                <span class="hud-slider-value" id="voiceRateVal">1.05x</span>
+            <div class="settings-slider-card">
+              <div class="settings-slider-header">
+                <span class="settings-label">⚡ VITESSE D'ÉLOCUTION</span>
+                <span class="settings-slider-value" id="voiceRateVal">1.05x</span>
               </div>
               <input type="range" id="voiceRateSlider" min="0.75" max="1.4" step="0.05" value="1.05" class="hud-range-slider">
             </div>
 
             <!-- Speech Pitch Slider -->
-            <div class="hud-slider-group">
-              <div class="hud-slider-header">
-                <span class="setting-label">🎚️ Tonalité vocale (Pitch)</span>
-                <span class="hud-slider-value" id="voicePitchVal">1.00</span>
+            <div class="settings-slider-card">
+              <div class="settings-slider-header">
+                <span class="settings-label">🎚️ TONALITÉ VOCALE (PITCH)</span>
+                <span class="settings-slider-value" id="voicePitchVal">1.00</span>
               </div>
               <input type="range" id="voicePitchSlider" min="0.8" max="1.3" step="0.05" value="1.0" class="hud-range-slider">
             </div>
           </div>
 
           <!-- 4. User Identity & Callsign -->
-          <div class="tool-card">
-            <div class="tool-card-title">
-              <span>👤 IDENTITÉ & INDICATIF TACTIQUE</span>
+          <div class="settings-card orange-tint">
+            <div class="settings-card-header">
+              <div class="settings-card-title orange">
+                <span class="settings-card-icon">👤</span>
+                <span>IDENTITÉ &amp; INDICATIF TACTIQUE</span>
+              </div>
+              <span class="settings-card-badge orange">COMMANDANT</span>
             </div>
-            <div class="setting-group">
-              <label class="setting-label">Comment E.D.I.T.H. doit vous nommer</label>
-              <input type="text" id="userCallsignInput" class="setting-input" placeholder="Monsieur, Commandant, Benoît...">
-              <div class="callsign-chips-row">
-                <button type="button" class="callsign-chip" data-callsign="Monsieur">Monsieur</button>
-                <button type="button" class="callsign-chip" data-callsign="Benoît">Benoît</button>
-                <button type="button" class="callsign-chip" data-callsign="Commandant">Commandant</button>
-                <button type="button" class="callsign-chip" data-callsign="Boss">Boss</button>
-                <button type="button" class="callsign-chip" data-callsign="Tony">Tony</button>
+            <div class="settings-field">
+              <label class="settings-label" for="userCallsignInput">COMMENT E.D.I.T.H. DOIT VOUS NOMMER</label>
+              <input 
+                type="text" 
+                id="userCallsignInput" 
+                class="settings-input" 
+                placeholder="Monsieur, Benoît, Commandant..." 
+                autocomplete="off"
+              >
+              <div class="callsign-pills-row">
+                <button type="button" class="callsign-pill" data-callsign="Monsieur">Monsieur</button>
+                <button type="button" class="callsign-pill" data-callsign="Benoît">Benoît</button>
+                <button type="button" class="callsign-pill" data-callsign="Commandant">Commandant</button>
+                <button type="button" class="callsign-pill" data-callsign="Boss">Boss</button>
+                <button type="button" class="callsign-pill" data-callsign="Tony">Tony</button>
               </div>
             </div>
           </div>
 
           <!-- 5. System Directives & Personality Customization -->
-          <div class="tool-card">
-            <div class="tool-card-title">
-              <span>🧠 DIRECTIVES DU COMMANDANT (PERSONNALITÉ MODIFIABLE)</span>
-            </div>
-            <div class="setting-group">
-              <div class="setting-label-row">
-                <label class="setting-label">Consignes spéciales pour E.D.I.T.H.</label>
-                <button type="button" class="btn-text-reset" id="resetPromptBtn">↺ Rétablir</button>
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-title">
+                <span class="settings-card-icon">🧠</span>
+                <span>DIRECTIVES DU COMMANDANT (PERSONNALITÉ)</span>
               </div>
-              <textarea id="customPromptInput" class="setting-textarea" rows="3" placeholder="Ex: 'Sois sarcastique et rapide comme JARVIS', 'Donne-moi toujours le code en premier', etc."></textarea>
-              <span class="setting-note">Ces instructions sont injectées directement dans le processeur neural d'E.D.I.T.H.</span>
+              <button type="button" class="btn-text-reset" id="resetPromptBtn">↺ Rétablir</button>
+            </div>
+            <div class="settings-field">
+              <label class="settings-label" for="customPromptInput">CONSIGNES SPÉCIALES POUR E.D.I.T.H.</label>
+              <textarea 
+                id="customPromptInput" 
+                class="settings-textarea" 
+                rows="3" 
+                placeholder="Ex: 'Sois sarcastique et rapide comme JARVIS', 'Donne-moi toujours le code en premier', etc."
+              ></textarea>
+              <div class="settings-field-hint">Ces instructions sont injectées directement dans le processeur neural d'E.D.I.T.H.</div>
             </div>
           </div>
 
           <!-- 6. Tactical Action Center -->
-          <div class="settings-actions-box">
-            <button class="action-btn-main orange" id="saveSettingsBtn">
+          <div class="settings-actions-card">
+            <button type="button" class="settings-save-button" id="saveSettingsBtn">
               <span>💾</span> ENREGISTRER TOUS LES PROTOCOLES
             </button>
-            <div class="settings-secondary-actions">
-              <button class="action-btn-sub cyan" id="testApiBtn">
+            <div class="settings-sub-actions-row">
+              <button type="button" class="settings-sub-btn cyan" id="testApiBtn">
                 <span>⚡</span> TESTER LIAISON IA
               </button>
-              <button class="action-btn-sub danger" id="clearChatBtn">
+              <button type="button" class="settings-sub-btn danger" id="clearChatBtn">
                 <span>🗑️</span> EFFACER CHAT
               </button>
             </div>
@@ -573,12 +617,12 @@
     </nav>
   </div>
 
-  <!-- App Scripts (Cache-Busted v2.0.5) -->
-  <script src="js/audio.js?v=2.0.5"></script>
-  <script src="js/speech.js?v=2.0.5"></script>
-  <script src="js/ai-service.js?v=2.0.5"></script>
-  <script src="js/vision-scanner.js?v=2.0.5"></script>
-  <script src="js/tools-s24.js?v=2.0.5"></script>
-  <script src="js/app-s24.js?v=2.0.5"></script>
+  <!-- App Scripts (Cache-Busted v2.0.6) -->
+  <script src="js/audio.js?v=2.0.6"></script>
+  <script src="js/speech.js?v=2.0.6"></script>
+  <script src="js/ai-service.js?v=2.0.6"></script>
+  <script src="js/vision-scanner.js?v=2.0.6"></script>
+  <script src="js/tools-s24.js?v=2.0.6"></script>
+  <script src="js/app-s24.js?v=2.0.6"></script>
 </body>
 </html>

@@ -861,8 +861,43 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Callsign quick chips
-    document.querySelectorAll('.callsign-chip').forEach(chip => {
+    // Direct Clipboard Paste button for Mobile
+    const pasteApiKeyBtn = document.getElementById('pasteApiKeyBtn');
+    if (pasteApiKeyBtn && apiKeyInput) {
+      pasteApiKeyBtn.addEventListener('click', async () => {
+        triggerHaptic('medium');
+        try {
+          if (navigator.clipboard && navigator.clipboard.readText) {
+            const clipText = await navigator.clipboard.readText();
+            if (clipText && clipText.trim().length > 0) {
+              apiKeyInput.value = clipText.trim();
+              updateSettingsStatus();
+              window.edithAudio.playBeep(880, 0.08);
+              const origText = pasteApiKeyBtn.textContent;
+              pasteApiKeyBtn.textContent = '✓ Collé !';
+              setTimeout(() => { pasteApiKeyBtn.textContent = origText; }, 1800);
+              return;
+            }
+          }
+          const manual = prompt('Collez votre clé API Google Gemini ou Groq ci-dessous :');
+          if (manual && manual.trim().length > 0) {
+            apiKeyInput.value = manual.trim();
+            updateSettingsStatus();
+            window.edithAudio.playBeep(880, 0.08);
+          }
+        } catch (err) {
+          const manual = prompt('Collez votre clé API Google Gemini ou Groq ci-dessous :');
+          if (manual && manual.trim().length > 0) {
+            apiKeyInput.value = manual.trim();
+            updateSettingsStatus();
+            window.edithAudio.playBeep(880, 0.08);
+          }
+        }
+      });
+    }
+
+    // Callsign quick chips / pills
+    document.querySelectorAll('.callsign-chip, .callsign-pill').forEach(chip => {
       chip.addEventListener('click', () => {
         triggerHaptic('light');
         const sign = chip.getAttribute('data-callsign');
