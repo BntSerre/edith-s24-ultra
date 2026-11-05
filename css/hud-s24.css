@@ -1120,22 +1120,137 @@ body, html {
 }
 
 /* ==========================================================================
-   TAB 4: CONFIGURATION & SETTINGS
+   TAB 4: CONFIGURATION & SETTINGS (Galaxy S24 Ultra Edition)
    ========================================================================== */
 .settings-view-pane {
   flex: 1;
   overflow-y: auto;
-  padding: 14px;
+  overflow-x: hidden;
+  padding: 12px 14px calc(90px + max(var(--safe-bottom), 12px)) 14px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  scroll-padding-bottom: 90px;
+}
+
+/* S24 Ultra HUD Header */
+.settings-hud-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(0, 240, 255, 0.05);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 4px;
+}
+
+.settings-hud-title {
+  font-family: var(--font-hud);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--jarvis-blue);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.settings-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--jarvis-blue);
+  background: rgba(0, 240, 255, 0.1);
+  padding: 2px 7px;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+}
+
+.status-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--jarvis-blue);
+  box-shadow: 0 0 8px var(--jarvis-blue);
+  animation: pulse-cyan 1.6s infinite alternate;
+}
+
+/* Compact PWA Banner for S24 Ultra */
+.pwa-compact-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(255, 119, 0, 0.08);
+  border: 1px solid var(--border-orange);
+  border-radius: 4px;
+  padding: 10px 12px;
+}
+
+.pwa-bar-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.pwa-bar-title {
+  font-family: var(--font-hud);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--vision-orange-bright);
+  letter-spacing: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pwa-bar-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+.pwa-install-mini-btn {
+  height: 34px;
+  padding: 0 12px;
+  background: linear-gradient(135deg, var(--vision-orange) 0%, #e65100 100%);
+  border: 1px solid #ffffff;
+  border-radius: 3px;
+  color: #ffffff;
+  font-family: var(--font-hud);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 0 10px var(--vision-orange-dim);
+  flex-shrink: 0;
+}
+
+.pwa-install-mini-btn:active {
+  transform: scale(0.96);
+}
+
+.tool-card-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--jarvis-blue);
+  background: rgba(0, 240, 255, 0.12);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  padding: 2px 6px;
+  border-radius: 2px;
+  letter-spacing: 0.5px;
 }
 
 .tool-card {
   background: var(--bg-card);
   border: 1px solid var(--border-cyan);
   border-radius: 4px;
-  padding: 14px;
+  padding: 12px;
   position: relative;
   overflow: hidden;
 }
@@ -1144,31 +1259,191 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.5px;
   color: var(--jarvis-blue);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .setting-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
+}
+
+.setting-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .setting-label {
-  font-size: 11px;
+  font-size: 10.5px;
   font-family: var(--font-mono);
   letter-spacing: 1px;
   color: var(--jarvis-blue);
   text-transform: uppercase;
 }
 
+.setting-hint-badge {
+  font-size: 9.5px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.api-key-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.api-key-wrapper .setting-input {
+  padding-right: 42px;
+}
+
+.api-toggle-btn {
+  position: absolute;
+  right: 6px;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  color: var(--jarvis-blue);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
 .setting-select, .setting-input {
   width: 100%;
   height: 42px;
   padding: 0 12px;
+  background: rgba(2, 11, 20, 0.85);
+  border: 1px solid var(--border-cyan);
+  border-radius: 4px;
+  color: var(--text-main);
+  font-size: 14px;
+  outline: none;
+}
+
+.setting-select:focus, .setting-input:focus {
+  border-color: var(--vision-orange);
+}
+
+/* S24 Callsign Quick Chips */
+.callsign-chips-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.callsign-chip {
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  color: var(--jarvis-blue);
+  border-radius: 3px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.callsign-chip:active {
+  background: var(--jarvis-blue);
+  color: #000;
+  font-weight: 700;
+}
+
+/* Voice Inline Row */
+.voice-row-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* S24 Actions Hub */
+.settings-actions-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.action-btn-main {
+  width: 100%;
+  height: 48px;
+  background: linear-gradient(135deg, var(--vision-orange) 0%, #d84315 100%);
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+  color: #ffffff;
+  font-family: var(--font-hud);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 0 16px var(--vision-orange-glow);
+  transition: transform 0.12s ease;
+}
+
+.action-btn-main:active {
+  transform: scale(0.98);
+}
+
+.settings-secondary-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn-sub {
+  flex: 1;
+  height: 42px;
+  border-radius: 4px;
+  font-family: var(--font-hud);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(2, 11, 20, 0.85);
+  transition: all 0.15s ease;
+}
+
+.action-btn-sub.cyan {
+  border: 1px solid var(--border-cyan);
+  color: var(--jarvis-blue);
+}
+
+.action-btn-sub.cyan:active {
+  background: var(--jarvis-blue);
+  color: #000;
+}
+
+.action-btn-sub.danger {
+  border: 1px solid rgba(255, 59, 48, 0.4);
+  color: var(--danger-red);
+}
+
+.action-btn-sub.danger:active {
+  background: var(--danger-red);
+  color: #ffffff;
+}
+
+.settings-bottom-spacer {
+  height: 60px;
+  flex-shrink: 0;
 }
 
 .action-btn-row {

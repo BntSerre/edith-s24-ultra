@@ -672,6 +672,46 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------------------
   // Settings Logic
   // ----------------------------------------------------
+  function updateSettingsStatus() {
+    const statusText = document.getElementById('settingsStatusText');
+    const apiKeyHint = document.getElementById('apiKeyHint');
+    const aiBadge = document.getElementById('aiLinkBadge');
+    const keyVal = (apiKeyInput ? apiKeyInput.value : '').trim();
+    const providerVal = providerSelect ? providerSelect.value : 'gemini';
+
+    if (keyVal.length > 5) {
+      if (statusText) statusText.textContent = `LIAISON ${providerVal.toUpperCase()} ACTIVE`;
+      if (apiKeyHint) {
+        apiKeyHint.textContent = '✓ Clé enregistrée';
+        apiKeyHint.style.color = 'var(--jarvis-blue)';
+      }
+      if (aiBadge) {
+        aiBadge.textContent = 'SATELLITE ACTIF';
+        aiBadge.style.color = 'var(--jarvis-blue)';
+      }
+    } else if (providerVal === 'offline') {
+      if (statusText) statusText.textContent = 'MODE AUTONOME S24U';
+      if (apiKeyHint) {
+        apiKeyHint.textContent = 'Sans clé nécessaire';
+        apiKeyHint.style.color = 'var(--text-muted)';
+      }
+      if (aiBadge) {
+        aiBadge.textContent = 'LOCAL';
+        aiBadge.style.color = 'var(--vision-orange-bright)';
+      }
+    } else {
+      if (statusText) statusText.textContent = 'MODE LOCAL (HORS LIAISON)';
+      if (apiKeyHint) {
+        apiKeyHint.textContent = 'Clé requise pour satellite';
+        apiKeyHint.style.color = 'var(--vision-orange)';
+      }
+      if (aiBadge) {
+        aiBadge.textContent = 'ATTENTE CLÉ';
+        aiBadge.style.color = 'var(--vision-orange-bright)';
+      }
+    }
+  }
+
   function initSettingsUI() {
     if (providerSelect) providerSelect.value = window.edithAI.provider;
     if (apiKeyInput) apiKeyInput.value = window.edithAI.apiKey;
@@ -680,6 +720,37 @@ document.addEventListener('DOMContentLoaded', () => {
       modelSelect.value = exists ? window.edithAI.customModel : 'auto';
     }
     if (userCallsignInput) userCallsignInput.value = window.edithAI.userName;
+
+    updateSettingsStatus();
+    if (apiKeyInput) apiKeyInput.addEventListener('input', updateSettingsStatus);
+    if (providerSelect) providerSelect.addEventListener('change', updateSettingsStatus);
+
+    // Visibility toggle for API Key
+    const toggleApiKeyVisibility = document.getElementById('toggleApiKeyVisibility');
+    if (toggleApiKeyVisibility && apiKeyInput) {
+      toggleApiKeyVisibility.addEventListener('click', () => {
+        triggerHaptic('light');
+        if (apiKeyInput.type === 'password') {
+          apiKeyInput.type = 'text';
+          toggleApiKeyVisibility.textContent = '🔒';
+        } else {
+          apiKeyInput.type = 'password';
+          toggleApiKeyVisibility.textContent = '👁️';
+        }
+      });
+    }
+
+    // Callsign quick chips
+    document.querySelectorAll('.callsign-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        triggerHaptic('light');
+        const sign = chip.getAttribute('data-callsign');
+        if (userCallsignInput && sign) {
+          userCallsignInput.value = sign;
+          window.edithAudio.playBeep(880, 0.05);
+        }
+      });
+    });
 
     const populateVoices = () => {
       if (!voiceSelect) return;
@@ -710,6 +781,7 @@ document.addEventListener('DOMContentLoaded', () => {
         userCallsignInput.value
       );
       if (voiceSelect) window.edithAudio.setVoice(voiceSelect.value);
+      updateSettingsStatus();
       window.edithAudio.playSuccess();
       alert("Paramètres S24 Ultra enregistrés avec succès !");
     });
